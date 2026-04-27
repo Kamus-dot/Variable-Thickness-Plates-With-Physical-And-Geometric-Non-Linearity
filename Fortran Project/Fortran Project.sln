@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37027.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "Fortran Project", "Fortran Project\Fortran Project.vfproj", "{D0EAB089-4728-297F-80B8-6D77EBDACE80}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0EAB089-4728-297F-80B8-6D77EBDACE80}.Debug|x64.ActiveCfg = Debug|x64
+		{D0EAB089-4728-297F-80B8-6D77EBDACE80}.Debug|x64.Build.0 = Debug|x64
+		{D0EAB089-4728-297F-80B8-6D77EBDACE80}.Debug|x86.ActiveCfg = Debug|Win32
+		{D0EAB089-4728-297F-80B8-6D77EBDACE80}.Debug|x86.Build.0 = Debug|Win32
+		{D0EAB089-4728-297F-80B8-6D77EBDACE80}.Release|x64.ActiveCfg = Release|x64
+		{D0EAB089-4728-297F-80B8-6D77EBDACE80}.Release|x64.Build.0 = Release|x64
+		{D0EAB089-4728-297F-80B8-6D77EBDACE80}.Release|x86.ActiveCfg = Release|Win32
+		{D0EAB089-4728-297F-80B8-6D77EBDACE80}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8971CC32-5548-4927-AAAF-62E4AE9752C3}
+	EndGlobalSection
+EndGlobal

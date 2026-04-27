@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{D0EAB089-4728-297F-80B8-6D77EBDACE80}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/>
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" UseCompiler="ifortCompiler">
+			<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+			<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+			<Tool Name="VFResourceCompilerTool"/>
+			<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+			<Tool Name="VFCustomBuildTool"/>
+			<Tool Name="VFPreLinkEventTool"/>
+			<Tool Name="VFPreBuildEventTool"/>
+			<Tool Name="VFPostBuildEventTool"/>
+			<Tool Name="VFManifestTool" SuppressStartupBanner="true"/>
+		</Configuration>
+		<Configuration Name="Debug|x64" UseCompiler="ifxCompiler">
+			<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+			<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+			<Tool Name="VFResourceCompilerTool"/>
+			<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+			<Tool Name="VFCustomBuildTool"/>
+			<Tool Name="VFPreLinkEventTool"/>
+			<Tool Name="VFPreBuildEventTool"/>
+			<Tool Name="VFPostBuildEventTool"/>
+			<Tool Name="VFManifestTool" SuppressStartupBanner="true"/>
+		</Configuration>
+		<Configuration Name="Release|Win32" UseCompiler="ifortCompiler">
+			<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+			<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+			<Tool Name="VFResourceCompilerTool"/>
+			<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+			<Tool Name="VFCustomBuildTool"/>
+			<Tool Name="VFPreLinkEventTool"/>
+			<Tool Name="VFPreBuildEventTool"/>
+			<Tool Name="VFPostBuildEventTool"/>
+			<Tool Name="VFManifestTool" SuppressStartupBanner="true"/>
+		</Configuration>
+		<Configuration Name="Release|x64" UseCompiler="ifxCompiler">
+			<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+			<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+			<Tool Name="VFResourceCompilerTool"/>
+			<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+			<Tool Name="VFCustomBuildTool"/>
+			<Tool Name="VFPreLinkEventTool"/>
+			<Tool Name="VFPreBuildEventTool"/>
+			<Tool Name="VFPostBuildEventTool"/>
+			<Tool Name="VFManifestTool" SuppressStartupBanner="true"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DGL.BAT"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DI.LIB"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIRINFO"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV1.FOR">
+			</File>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV10.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV11.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV12.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV13.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV14.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV15.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV16.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV17.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV18.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV19.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV2.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV20.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV21.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV22.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV23.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV3.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV4.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV5.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV6.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV7.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV8.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIV9.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DIVD.DAT"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\DLIB.BAT"/>
+			<File RelativePath=".\Fortran Project.for">
+			</File>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\myprogram.exe"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\NTR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\PE2.PRO"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\S.DAT"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\SURFS.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\SURFW.FOR"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\T.DAT"/>
+			<File RelativePath="..\..\..\..\..\..\Desktop\NEW\NEW\W.DAT"/>
+		</Filter>
+		<File RelativePath=".\ReadMe.txt"/>
+	</Files>
+	<Globals/>
+</VisualStudioProject>
