@@ -1,31 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Math;
 
 namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        // HY1[], HX1[] - текущие базисные функции прогибов
-        // HYF[], HXF[] - текущие базисные функции усилий (функции Эри)
+        // UNKN (unknown) - известная функция
+        // KN (unknown) - известная функция
+        // RtX, RtY - функции правой стороны, зависящие от X и Y
         // IXY - Флаг ориентации (расчёт по X, или по Y)
         // IWF - Флаг типа уравнения (1 - уравнение прогибов, 2 - уравнение
         // функции усилий)
-        // IL - Флаг геометрической нелинейност
-        // Cистема уравнений для решения задачи слабого изгиба пластины с
-        // учетом растяжения, сжатия и сдвига в срединном слое состоит
-        // из уравнения Софи-Жермен-Лагранжа и уравнения L2L2F = 0
-        // (в случае геометрической линейности); Данная задача 
-        // фактически разбивается на две: 
-        // 1. Задача определения прогиба w - задача исследования чистого
-        // изгиба пластины.
-        // 2. Задача исследования напряженно деформированного состояния
-        // срединной поверхности пластины без изгиба – плоская задача теории
-        // упругости. 
-        public static void Gauss(double[,] HY1, double[,] HX1, double[,] HYF,
-           double[,] HXF, int IXY, int IWF, int IL, out double[,] Y,
+        // IL - Флаг геометрической нелинейности
+        public void Gauss(double[,] UNK, double[,] KN, double[,] RtY,
+           double[,] RtX, int IXY, int IWF, int IL, out double[,] Y,
            out double[,] X, out double[,] YF, out double[,] XF)
         {
             double[,] A11 = new double[12, 12];
@@ -48,7 +42,6 @@ namespace _1_st_Model
             double[] RS = new double[1600];
             double[] S11 = new double[12];
             double[] S12 = new double[12];
-            double[] B = new double[40];
             double[] XS = new double[40];
             double[] XK = new double[14];
             double[] XI = new double[14];
@@ -63,17 +56,6 @@ namespace _1_st_Model
             int N3 = N + 3;
             int N4 = N + 4;
             int IK = N * NM;
-            double F2 = VO * VO;
-
-            //for (int i = 0; i < 40; i++)
-            //{
-            //    XS[i] = 0.0;
-            //    for (int j = 0; j < 44; j++)
-            //    {
-            //        S[i, j] = 0.0;
-            //    }
-            //}
-
             double G1, G2, GF1, GF2;
 
             if (IWF != 1)
@@ -111,24 +93,26 @@ namespace _1_st_Model
                 }
             }
 
-            double C1;
+            double Lambda;
             if (IXY != 1)
             {
-                C1 = 1 / V2;
+                Lambda = 1 / this.Lambda;
             }
             else
             {
-                C1 = V2;
+                Lambda = this.Lambda;
             }
+            double Lambda4 = Math.Pow(Lambda, 4);
+            double Lambda2 = Math.Pow(Lambda, 2);
 
-            // Экстраполяция значений матриц жесткости на граничные узлы
+            // Экстраполяция матрицы толщины на граничные узлы
             for (int I = 0; I < N2; I++)
             {
                 H[N1, I] = H[N - 1, I];
                 H[I, N1] = H[I, N - 1];
             }
 
-            // Задание основных значений матрицы
+            // Заполнение внутренней матрицы толщины для 
             for (int I = 1; I < N3; I++)
             {
                 for (int J = 1; J < N3; J++)
@@ -150,18 +134,18 @@ namespace _1_st_Model
             // Экстраполяция и задание начальных значений функций прогиба
             for (int I = 0; I < NM; I++)
             {
-                HX1[I, 0] = G1 * HX1[I, 2];
-                HX1[I, N2] = HX1[I, N];
-                HX1[I, N3] = HX1[I, N - 1];
-                HXF[I, 0] = GF1 * HXF[I, 2];
-                HXF[I, N2] = HXF[I, N];
-                HXF[I, N3] = HXF[I, N - 1];
-                HY1[I, 0] = G2 * HY1[I, 2];
-                HY1[I, N2] = HY1[I, N];
-                HY1[I, N3] = HY1[I, N - 1];
-                HYF[I, 0] = GF2 * HYF[I, 2];
-                HYF[I, N2] = HYF[I, N];
-                HYF[I, N3] = HYF[I, N - 1];
+                KN[I, 0] = G1 * KN[I, 2];
+                KN[I, N2] = KN[I, N];
+                KN[I, N3] = KN[I, N - 1];
+                RtX[I, 0] = GF1 * RtX[I, 2];
+                RtX[I, N2] = RtX[I, N];
+                RtX[I, N3] = RtX[I, N - 1];
+                UNK[I, 0] = G2 * UNK[I, 2];
+                UNK[I, N2] = UNK[I, N];
+                UNK[I, N3] = UNK[I, N - 1];
+                RtY[I, 0] = GF2 * RtY[I, 2];
+                RtY[I, N2] = RtY[I, N];
+                RtY[I, N3] = RtY[I, N - 1];
             }
 
             for (int I = 1; I < N3; I++)
@@ -209,7 +193,7 @@ namespace _1_st_Model
             {
                 case 1:
                 case 2:
-                SIG = QL;   
+                SIG = QL;
                 break;
                 case 3:
                 SIG = 1.0;
@@ -226,7 +210,7 @@ namespace _1_st_Model
             {
                 for (int I = 0; I < N4; I++)
                 {
-                    XI[I] = HX1[II, I];
+                    XI[I] = KN[II, I];
                 }
 
                 int IN = II * N;
@@ -235,174 +219,212 @@ namespace _1_st_Model
 
                 for (int KK = 0; KK < NM; KK++)
                 {
-                    int KN = KK * N + 2;
+                    int KN3 = KK * N + 2;
 
                     for (int I = 0; I < N4; I++)
                     {
-                        XK[I] = HX1[KK, I];
+                        XK[I] = KN[KK, I];
                     }
 
-                    for (int J = 2; J < N2; J++)
+                    for (int J = 2; J < N; J++)
                     {
                         int J_1 = J - 1;
                         int J_2 = J - 2;
                         int J1 = J + 1;
                         int J2 = J + 2;
 
-                        for (int I = 2; I < N2; I++)
+                        for (int I = 2; I < N; I++)
                         {
                             int I_1 = I - 1;
                             int I_2 = I - 2;
                             int I1 = I + 1;
                             int I2 = I + 2;
 
-                            //double XI3 = XI[I];
+                            double XI3 = XI[I];
                             double XK1 = XK[I_2];
                             double XK2 = XK[I_1];
                             double XK3 = XK[I];
                             double XK4 = XK[I1];
                             double XK5 = XK[I2];
-                            double XF1 = HXF[KK, I_2];
-                            double XF2 = HXF[KK, I_1];
-                            double XF3 = HXF[KK, I];
-                            double XF4 = HXF[KK, I1];
-                            double XF5 = HXF[KK, I2];
 
-                            // Производные не делятся на шаг 
+                            double XF1 = RtX[KK, I_2];
+                            double XF2 = RtX[KK, I_1];
+                            double XF3 = RtX[KK, I];
+                            double XF4 = RtX[KK, I1];
+                            double XF5 = RtX[KK, I2];
 
-                            double D1XI = (XI[I1] - XI[I_1]) / 2.0;
-                            double D2XI = XI[I1] - 2.0 * XI[I] + XI[I_1];
-                            double D1XF = (XF4 - XF2) / 2.0;
-                            double D2XF = XF4 - 2.0 * XF3 + XF2;
-                            double D1XK = (XK4 - XK2) / 2.0;
-                            double D2XK = XK4 - 2.0 * XK3 + XK2;
+                            double D1XF = (XF4 - XF2) / 2;
+                            double D2XF = (XF4 - 2 * XF3 + XF2);
+                            double D3XF = (XF5 - 2 * XF4 + 2 * XF2 - XF1) / 2;
+                            double D4XF = (XF5 - 4 * XF4 + 6 * XF3 - 4 * XF4 + XF1);
 
-                            int M, M1, M2, M3, L, L1, L2, L3;
+                            double D1XK = (XK4 - XK2) / 2;
+                            double D2XK = (XK4 - 2 * XK3 + XK2);
+                            double D3XK = (XK5 - 2 * XK4 + 2 * XK2 - XK1) / 2;
+                            double D4XK = (XK5 - 4 * XK4 + 6 * XK3 - 4 * XK4 + XK1);
+
+                            int M1, M2, M3, M4, M5, L1, L2, L3, L4, L5;
                             if (IXY == 1)
                             {
-                                M = I_1;
-                                M1 = I_1;
+                                M1 = I_2;
                                 M2 = I_1;
-                                M3 = I1;
-                                L = J_2;
-                                L1 = J_1;
-                                L2 = J;
-                                L3 = J1;
+                                M3 = I;
+                                M4 = I1;
+                                M5 = I2;
+                                L1 = J_2;
+                                L2 = J_1;
+                                L3 = J;
+                                L4 = J1;
+                                L5 = J2;
                             }
                             else
                             {
-                                M = J_2;
-                                M1 = J_1;
-                                M2 = J;
-                                M3 = J1;
-                                L = I_1;
-                                L1 = I_1;
+                                M1 = J_2;
+                                M2 = J_1;
+                                M3 = J;
+                                M4 = J1;
+                                M5 = J2;
+                                L1 = I_2;
                                 L2 = I_1;
-                                L3 = I1;
+                                L3 = I;
+                                L4 = I1;
+                                L5 = I2;
                             }
+                            double C4 = 0, C3 = 0, C2 = 0, C1 = 0, C = 0;
 
-                            if (IWF != 1)
+                            //(Производные не делятся на шаг, т.к из-за безразмерности можно вынести 1/V2^2)
+                            if (IWF == 1)
                             {
-                                C21 = 1.0 / E00[M, L];
-                                C22 = 1.0 / E00[M1, L1];
-                                C23 = 1.0 / E00[M2, L2];
-                                A21 = (1.0 / E01[M, L] + C21) / 2.0;
-                                A22 = (1.0 / E01[M1, L1] + C22) / 2.0;
-                                A23 = (1.0 / E01[M2, L2] + C23) / 2.0;
-                                QT2 = QTF[M1, L1];
-                            }
-                            else
-                            {
-                                C21 = Math.Pow(E10[M, L], 2) / E00[M, L] - E20[M, L];
-                                C22 = Math.Pow(E10[M1, L1], 2) / E00[M1, L1] - E20[M1, L1];
-                                C23 = Math.Pow(E10[M2, L2], 2) / E00[M2, L2] - E20[M2, L2];
-                                A21 = (Math.Pow(E11[M, L], 2) / E01[M, L] - E21[M, L] + C21) / 2.0;
-                                A22 = (Math.Pow(E11[M1, L1], 2) / E01[M1, L1] - E21[M1, L1] + C22) / 2.0;
-                                A23 = (Math.Pow(E11[M2, L2], 2) / E01[M2, L2] - E21[M2, L2] + C23) / 2.0;
+                                double D1AZY = (AZ[M3, L4] - AZ[M3, L2]) / 2;
+                                double D2AZY = (AZ[M3, L4] - 2 * AZ[M3, L3] + AZ[M3, L2]);
+                                double D1AZX = (AZ[M4, L3] - AZ[M2, L3]) / 2;
+                                double D2AZX = (AZ[M4, L3] - AZ[M3, L3] + AZ[M2, L3]);
+                                double D1AZ_nuY = (AZ_nu[M3, L4] - AZ_nu[M3, L2]) / 2;
+                                double D2AZ_nuY = (AZ_nu[M3, L4] - 2 * AZ_nu[M3, L3] + AZ_nu[M3, L2]);
+                                double D1AZ_nuX = (AZ_nu[M4, L3] - AZ_nu[M2, L3]) / 2;
+                                double D2AZ_nuX = (AZ_nu[M4, L3] - 2 * AZ_nu[M3, L3] + AZ_nu[M2, L3]);
+                                double D1BZY = (BZ[M3, L4] - BZ[M3, L2]) / 2;
+                                double D1BZX = (BZ[M4, L3] - BZ[M2, L3]) / 2;
+                                double D2BZXY = (BZ[M4, L4] - BZ[M4, L2] - BZ[M2, L4] + BZ[M2, L2]) / 4;
+                                double D1PHIX = (Corrosion[M4, L3] - Corrosion[M2, L3]) / 2;
+                                double D2PHIX = (Corrosion[M4, L3] - 2 * Corrosion[M3, L3] + Corrosion[M2, L3]);
+                                double D3PHIX = (Corrosion[M5, L3] - 2 * Corrosion[M4, L3] + 2 * Corrosion[M2, L3]
+                                    - Corrosion[M1, L3]) / 2;
+                                double D4PHIX = (Corrosion[M5, L3] - 4 * Corrosion[M4, L3] + 6 * Corrosion[M3, L3]
+                                    - 4 * Corrosion[M2, L3] + Corrosion[M1, L3]);
+                                double D1PHIY = (Corrosion[M3, L4] - Corrosion[M3, L2]) / 2;
+                                double D2PHIY = (Corrosion[M3, L4] - 2 * Corrosion[M3, L3] + Corrosion[M1, L2]);
+                                double D3PHIY = (Corrosion[M3, L5] - 2 * Corrosion[M3, L4] + 2 * Corrosion[M3, L2]
+                                    - Corrosion[M3, L1]) / 2;
+                                double D4PHIY = (Corrosion[M3, L5] - 4 * Corrosion[M3, L4] + 6 * Corrosion[M3, L3]
+                                    - 4 * Corrosion[M3, L2] + Corrosion[M3, L1]);
+                                double D2PHIXY = (Corrosion[M4, L4] - Corrosion[M4, L2] - Corrosion[M2, L4] +
+                                    Corrosion[M2, L2]) / 4;
+                                double D3PHIXXY = (Corrosion[M4, L4] - 2 * Corrosion[M3, L4] + Corrosion[M2, L4]
+                                    - Corrosion[M4, L2] + 2 * Corrosion[M3, L2] - Corrosion[M2, L2]) / 2;
+                                double D3PHIXYY = (Corrosion[M4, L4] - 2 * Corrosion[M4, L3] + Corrosion[M4, L2] -
+                                    Corrosion[M2, L4] + 2 * Corrosion[M2, L3] - Corrosion[M2, L2]) / 2;
+                                double D4PHIXXYY = (Corrosion[M4, L4] - 2 * Corrosion[M3, L4] + Corrosion[M2, L4] -
+                                    2 * Corrosion[M4, L3] + 4 * Corrosion[M3, L3] - 2 * Corrosion[M2, L3] +
+                                    Corrosion[M4, L2] - 2 * Corrosion[M3, L2] + Corrosion[M2, L2]);
+
+                                // Коэффициенты для уравнения прогибов
+                                C4 = Lambda4 * AZ[I, J] * XK3 * XI3;
+                                C3 = Lambda4 * D1AZY * XK3 * XI3;
+                                C2 = Lambda2 * ((2 * AZ_nu[I, J] + BZ[I, J]) * D2XK * XI3 + (2 * D1AZ_nuX +
+                                    D1BZX) * D1XK * XI3 + (Lambda2 * D2AZY + D2AZ_nuX + V2 * QK * QL) * XI3 * XK3);
+                                C1 = Pow(Lambda, 2) * ((D1AZ_nuY + D1BZY) * D2XK * XI3 + D2BZXY * D1XK * XI3);
+                                C = AZ[I, J] * D4XK * XI3 + 2 * D1AZX * D3XK + (D2AZX + Lambda2 * D2AZ_nuY +
+                                    V2 * QL) * D2XK * XI3;
+
                                 QT1 = QTW[M1, L1];
                             }
+                            else
+                            {
+                                double tilde_A1X = 2 / (Pow(A[M2, L3], 2) - Pow(A_nu[M2, L3], 2));
+                                double tilde_A3X = 2 / (Pow(A[M4, L3], 2) - Pow(A_nu[M4, L3], 2));
+                                double tilde_A1Y = 2 / (Pow(A[M3, L2], 2) - Pow(A_nu[M3, L2], 2));
+                                double tilde_A3Y = 2 / (Pow(A[M3, L4], 2) - Pow(A_nu[M3, L4], 2));
+                                double tilde_A = 2 / (Pow(A[M3, L3], 2) - Pow(A_nu[M3, L3], 2));
+                                double D1AY = (A[M3, L4] - A[M3, L2]) / (2);
+                                double D2AY = (A[M3, L4] - 2 * A[M3, L3] + A[M3, L2]);
+                                double D1AX = (A[M4, L3] - A[M2, L3]) / (2);
+                                double D2AX = (A[M4, L3] - 2 * A[M3, L3] + A[M2, L3]);
+                                double D1A_nuY = (A_nu[M3, L4] - A_nu[M3, L2]) / (2);
+                                double D2A_nuY = (A_nu[M3, L4] - 2 * A_nu[M3, L3] + A_nu[M3, L2]);
+                                double D1A_nuX = (A_nu[M4, L3] - A_nu[M2, L3]) / (2);
+                                double D2A_nuX = (A_nu[M4, L3] - 2 * A_nu[M3, L3] + A_nu[M2, L3]);
+                                double D1BY = (B[M3, L4] - B[M3, L2]) / (2);
+                                double D1BX = (B[M4, L3] - B[M2, L3]) / (2);
+                                double D2BXY = (B[M4, L4] - B[M4, L2] - B[M2, L4] + B[M2, L2]) / 4;
+                                double D1tilde_AY = (tilde_A3Y - tilde_A1Y) / 2;
+                                double D2tilde_AY = (tilde_A3Y - 2 * tilde_A + tilde_A1Y);
+                                double D1tilde_AX = (tilde_A3X - tilde_A1X) / 2;
+                                double D2tilde_AX = (tilde_A3X - 2 * tilde_A + tilde_A1Y);
 
-                            B21 = A21 - C21;
-                            B22 = A22 - C22;
-                            B23 = A23 - C23;
-                            AM1 = XI[I] * XK3 * A21;
-                            AJ = XI[I] * XK3 * A22;
-                            AP1 = XI[I] * XK3 * A23;
-                            BM1 = XI[I] * B21 * D2XK;
-                            BJ = XI[I] * B22 * D2XK;
-                            BP1 = XI[I] * B23 * D2XK;
-                            CM1 = -C21 * D1XK * D1XI;
-                            CP1 = -C23 * D1XK * D1XI;
-                            DJ = A22 * D2XK * D2XI;
-                            EJ = B22 * XK3 * D2XI;
-                            S1[I_1] = C1 * AM1 + CM1 / 2;
-                            S2[I_1] = BM1 + EJ - 2 * C1 * (AJ + AM1);
-                            S3[I_1] = DJ / C1 - 2 * (BJ + EJ) + C1 * (AP1 + 4 * AJ + AM1) - (CP1 + CM1) / 2;
-                            S4[I_1] = BP1 + EJ - 2 * C1 * (AP1 + AJ);
-                            S5[I_1] = C1 * AP1 + CP1 / 2;
+                                C4 = -Lambda4 * tilde_A * A[M3, L3] * XK3 * XI3;
+                                C3 = -Lambda4 * 2 * (D1tilde_AY * A[M3, L3] + D1AY * tilde_A) * XK3 * XI3;
+                                C2 = Lambda2 * (2 * tilde_A * A_nu[M3, L3] - (1 / B[M3, L3])) * D2XK * XI3 +
+                                    (2 * D1tilde_AX * A_nu[M3, L3] + 2 * D1A_nuX * tilde_A +
+                                    (1 / Pow(B[M3, L3], 2)) * D1BX) * D1XK * XI3 - (Lambda2 * (D2tilde_AY * 
+                                    A[M3, L3] + 2 * D1tilde_AY * D1AY + D2AY * tilde_A) - D2tilde_AX * 
+                                    A_nu[M3, L3] - 2 * D1tilde_AX * D1A_nuX - D2A_nuX * tilde_A) * XK3 * XI3;
+                                C1 = Lambda2 * (2 * D2tilde_AY * A_nu[M3, L3] + 2 * D1A_nuY * tilde_A +
+                                    (1 / Pow(B[M3, L3], 2)) * D1BY) * D2XK * XI3 - D2BXY *
+                                    (1 / Pow(B[M3, L3], 2)) * D1XK * XI3;
+                                C = -tilde_A * A[M3, L3] * D4XK * XI3 - 2 * (D1tilde_AX * A[M3, L3] +
+                                    D1AX * tilde_A) * D3XK * XI3 - (D2tilde_AX * A[M3, L3] + 2 * D1tilde_AX
+                                    * D1AX + D2AX * tilde_A - Lambda2 * (D2tilde_AY * A_nu[M3, L3] - 2 * D1tilde_AY
+                                    * D1A_nuY - D2A_nuY * tilde_A)) * D2XK * XI3;
+
+                                QT2 = QTF[M1, L1];
+                            }
+
+                            S1[I_1] = C4 + C3 / 2; // сократилось V3, осталось "2"
+                            S2[I_1] = -4 * C4 - C3 + C2 + C1 / 2;
+                            S3[I_1] = 6 * C4 - 2 * C2 + C;
+                            S4[I_1] = -4 * C4 + C3 + C2 - C1 / 2;
+                            S5[I_1] = C4 - C3 / 2;
+
                             if (IL != 0 && JF != 0)
                             {
-                                C21 = -E10[M, L] / E00[M, L];
-                                C22 = -E10[M1, L1] / E00[M1, L1];
-                                C23 = -E10[M2, L2] / E00[M2, L2];
-                                A21 = (E11[M, L] / E01[M, L] + C21) / 2;
-                                A22 = (E11[M1, L1] / E01[M1, L1] + C22) / 2;
-                                A23 = (E11[M2, L2] / E01[M2, L2] + C23) / 2;
-                                B21 = A21 - C21;
-                                B22 = A22 - C22;
-                                B23 = A23 - C23;
-                                AM1 = XI[I] * XF3 * A21;
-                                AJ = XI[I] * XF3 * A22;
-                                AP1 = XI[I] * XF3 * A23;
-                                BM1 = XI[I] * XF3 * A23;
-                                BJ = XI[I] * B22 * D2XF;
-                                BP1 = XI[I] * B23 * D2XF;
-                                CM1 = -C21 * D1XF * D2XI;
-                                CP1 = -C23 * D1XF * D1XI;
-                                DJ = A22 * D2XF * D2XI;
-                                EJ = B22 * XF3 * D2XI;
-                                S7[I_1] = C1 * AM1 + CM1 / 2;
-                                S8[I_1] = BM1 + EJ - 2 * C1 * (AJ + AM1);
-                                S9[I_1] = DJ / C1 - 2 * (BJ + EJ) + C1 *
-                                    (AP1 + 4 * AJ + AM1) - (CP1 + CM1) / 2;
-                                S10[I_1] = BP1 + EJ - 2 * C1 * (AP1 + AJ);
-                                S11[I_1] = C1 * AP1 + CP1 / 2;
+                               
                             }
                             if (IXY == 1)
                             {
-                                M = I;
-                                L = J;
+                                M3 = I;
+                                L3 = J;
                             }
                             else
                             {
-                                M = J;
-                                L = I;
+                                M3 = J;
+                                L3 = I;
                             }
-                            double D2HX = (HM[M3, L] - 2 * HM[M, L] + HM[M1, L]) / VO;
-                            double D2HY = (HM[M, L3] - 2 * HM[M, L] + HM[M, L1]) / VO;
-                            double DHXY = (HM[M, L3] - HM[M1, L3] - HM[M3, L1]
-                                + HM[M1, L1]) / (4 * VO);
+                            double D2HX = (HM[M3, L3] - 2 * HM[M3, L3] + HM[M1, L3]) / this.V2;
+                            double D2HY = (HM[M3, L3] - 2 * HM[M3, L3] + HM[M3, L1]) / this.V2;
+                            double DHXY = (HM[M3, L3] - HM[M1, L3] - HM[M3, L1]
+                                + HM[M1, L1]) / (4 * this.V2);
 
                             // Здесь идёт расслоение задачи (решение либо функции
                             // усилий, либо функции прогибов)
                             if (IWF == 1)
                             {
-                                double D2FX = (FXY[M3, L] - 2 * FXY[M, L] + FXY[M1, L]) / VO;
-                                double D2FY = (FXY[M, L3] - 2 * FXY[M, L] + FXY[M, L1]) / VO;
+                                double D2FX = (FXY[M3, L3] - 2 * FXY[M3, L3] + FXY[M1, L3]) / this.V2;
+                                double D2FY = (FXY[M3, L3] - 2 * FXY[M3, L3] + FXY[M3, L1]) / this.V2;
                                 double DFXY = (FXY[M3, L3] - FXY[M1, L3] - FXY[M3, L1]
-                                    + FXY[M1, L1]) / (4 * VO);
-                                double DB11X = (B11[M3, L] - 2 * B11[M, L] + B11[M1, L]) / VO;
-                                double DB11Y = (B11[M, L3] - 2 * B11[M, L] + B11[M, L1]) / VO;
-                                double DB10X = (B10[M3, L] - 2 * B10[M, L] + B10[M1, L]) / VO;
-                                double DB10Y = (B10[M, L3] - 2 * B10[M, L] + B10[M, L1]) / VO;
+                                    + FXY[M1, L1]) / (4 * this.V2);
+                                double DB11X = (B11[M3, L3] - 2 * B11[M3, L3] + B11[M1, L3]) / this.V2;
+                                double DB11Y = (B11[M3, L3] - 2 * B11[M3, L3] + B11[M3, L1]) / this.V2;
+                                double DB10X = (B10[M3, L3] - 2 * B10[M3, L3] + B10[M1, L3]) / this.V2;
+                                double DB10Y = (B10[M3, L3] - 2 * B10[M3, L3] + B10[M3, L1]) / this.V2;
                                 if (KK == NM - 1)
                                 {
-                                    double D2X = (WXY[M3, L] - 2 * WXY[M, L] + WXY[M1, L]) / VO;
-                                    double D2Y = (WXY[M, L3] - 2 * WXY[M, L] + WXY[M, L1]) / VO;
-                                    double D2X0 = (W0[M3, L] - 2 * W0[M, L] + W0[M1, L]) / VO;
-                                    double D2Y0 = (W0[M, L3] - 2 * W0[M, L] + W0[M, L1]) / VO;
+                                    double D2X = (WXY[M3, L3] - 2 * WXY[M3, L3] + WXY[M1, L3]) / this.V2;
+                                    double D2Y = (WXY[M3, L3] - 2 * WXY[M3, L3] + WXY[M3, L1]) / this.V2;
+                                    double D2X0 = (W0[M3, L3] - 2 * W0[M3, L3] + W0[M1, L3]) / this.V2;
+                                    double D2Y0 = (W0[M3, L3] - 2 * W0[M3, L3] + W0[M3, L1]) / this.V2;
                                     double DXY0 = (W0[M3, L3] - W0[M1, L3] - W0[M3, L1]
-                                        + W0[M1, L1]) / (4 * VO);
+                                        + W0[M1, L1]) / (4 * this.V2);
                                     double PX = 0;
                                     double PY = 0;
                                     if (IPL == 3)
@@ -414,15 +436,15 @@ namespace _1_st_Model
                                     S61[I_1] = QT1 * XI[I];
                                     S6[I_1] = (-SKX * D2FY - SKY * D2FX - HH * (D2FY *
                                         D2HX + D2FX * D2HY - 2 * DFXY * DHXY) / 2) * XI[I];
-                                    S62[I_1] = -SIG * (C1 * DB11Y + DB10X + D2HX / 2 + SKX + PX +
-                                        QK * (DB10Y + DB11X / C1 + D2HY / 2 + SKY + PY)) * XI[I];
+                                    S62[I_1] = -SIG * (Lambda * DB11Y + DB10X + D2HX / 2 + SKX + PX +
+                                        QK * (DB10Y + DB11X / Lambda + D2HY / 2 + SKY + PY)) * XI[I];
                                 }
                                 double SIGM = SIG;
                                 // В случае, если NM = 1 - блок выше выполняется первее (значение SIGM = 1)
                                 if (IPL == 3) SIGM = 0;
-                                S12[I_1] = D2XK * XI[I] * (D2FY + SIGM) * VO;
-                                S13[I_1] = XK3 * XI[I] * (D2FX + QK * SIGM) * VO;
-                                S14[I_1] = D1XK * XI[I] * DFXY * VO;
+                                S12[I_1] = D2XK * XI[I] * (D2FY + SIGM) * this.V2;
+                                S13[I_1] = XK3 * XI[I] * (D2FX + QK * SIGM) * this.V2;
+                                S14[I_1] = D1XK * XI[I] * DFXY * this.V2;
                             }
                             else
                             {
@@ -430,61 +452,61 @@ namespace _1_st_Model
                                 {
                                     double D2XY = (WXY[M3, L3] - WXY[M1, L3] -
                                         WXY[M3, L1] + WXY[M1, L1]) / 4;
-                                    double D2X = (WXY[M3, L] - 2 * WXY[M, L] + WXY[M1, L]);
-                                    double D2Y = (WXY[M, L3] - 2 * WXY[M, L] + WXY[M, L1]);
-                                    double D2X0 = (W0[M3, L] - 2 * W0[M, L] + W0[M1, L]);
-                                    double D2Y0 = (W0[M, L3] - 2 * W0[M, L] + W0[M, L1]);
+                                    double D2X = (WXY[M3, L3] - 2 * WXY[M3, L3] + WXY[M1, L3]);
+                                    double D2Y = (WXY[M3, L3] - 2 * WXY[M3, L3] + WXY[M3, L1]);
+                                    double D2X0 = (W0[M3, L3] - 2 * W0[M3, L3] + W0[M1, L3]);
+                                    double D2Y0 = (W0[M3, L3] - 2 * W0[M3, L3] + W0[M3, L1]);
                                     double DXY0 = (W0[M3, L3] - W0[M1, L3] - W0[M3, L1]
                                     + W0[M1, L1]) / 4;
-                                    double D2A1X = A11[M3, L] - 2 * A11[M, L] + A11[M1, L];
-                                    double D2A1Y = A11[M, L3] - 2 * A11[M, L] + A11[M, L1];
-                                    double D2A2X = A12[M3, L] - 2 * A12[M, L] + A12[M1, L];
-                                    double D2A2Y = A12[M, L3] - 2 * A12[M, L] + A12[M, L1];
-                                    S6[I_1] = -(QT2 * F2 + VO * (SKX * (D2Y - D2Y0) + SKY *
-                                    (D2X - D2X0))) * XI[I] + HH * VO * ((D2XY - DXY0) * DHXY
+                                    double D2A1X = A11[M3, L3] - 2 * A11[M3, L3] + A11[M1, L3];
+                                    double D2A1Y = A11[M3, L3] - 2 * A11[M3, L3] + A11[M3, L1];
+                                    double D2A2X = A12[M3, L3] - 2 * A12[M3, L3] + A12[M1, L3];
+                                    double D2A2Y = A12[M3, L3] - 2 * A12[M3, L3] + A12[M3, L1];
+                                    S6[I_1] = -(QT2 * V2 + this.V2 * (SKX * (D2Y - D2Y0) + SKY *
+                                    (D2X - D2X0))) * XI[I] + HH * this.V2 * ((D2XY - DXY0) * DHXY
                                     - ((D2X - D2X0) * D2HY + (D2Y - D2Y0) * D2HX) / 2) * XI[I] -
-                                    SIG * (C1 * D2A1Y + D2A2X + QK * (D2A1X / C1 + D2A2Y)) * VO * XI[I];
+                                    SIG * (Lambda * D2A1Y + D2A2X + QK * (D2A1X / Lambda + D2A2Y)) * this.V2 * XI[I];
                                     S6[I_1] = S6[I_1] + +(Math.Pow(D2XY, 2) - D2X * D2Y
                                         - Math.Pow(DXY0, 2) + D2X0 * D2Y0) * XI[I];
                                 }
                             }
                         }
-                        double C = 0.5;                        
-                        double A1 = SIM(S1, C, N);
-                        double A2 = SIM(S2, C, N);
-                        double A3 = SIM(S3, C, N);
-                        double A4 = SIM(S4, C, N);
-                        double A5 = SIM(S5, C, N);
+                        double T = 0.5;
+                        double A1 = SIM(S1, T, N);
+                        double A2 = SIM(S2, T, N);
+                        double A3 = SIM(S3, T, N);
+                        double A4 = SIM(S4, T, N);
+                        double A5 = SIM(S5, T, N);
                         double A6 = 0, A61 = 0, A62 = 0;
                         if (IL != 0 && JF != 0)
                         {
-                            double AF1 = SIM(S7, C, N);
-                            double AF2 = SIM(S8, C, N);
-                            double AF3 = SIM(S9, C, N);
-                            double AF4 = SIM(S10, C, N);
-                            double AF5 = SIM(S11, C, N);
-                            AF = AF1 * HYF[KK, J_2] + AF2 * HYF[KK, J_1] + AF3 * HYF[KK, J]
-                                + AF4 * HYF[KK, J1] + AF5 * HYF[KK, J2];
+                            double AF1 = SIM(S7, T, N);
+                            double AF2 = SIM(S8, T, N);
+                            double AF3 = SIM(S9, T, N);
+                            double AF4 = SIM(S10, T, N);
+                            double AF5 = SIM(S11, T, N);
+                            AF = AF1 * RtY[KK, J_2] + AF2 * RtY[KK, J_1] + AF3 * RtY[KK, J]
+                                + AF4 * RtY[KK, J1] + AF5 * RtY[KK, J2];
                         }
                         if (IWF == 1)
                         {
                             if (IL != 0)
                             {
-                                double PH1 = SIM(S12, C, N) * IL;
-                                double PH2 = SIM(S13, C, N) * IL;
-                                double PH3 = SIM(S14, C, N) * IL;
+                                double PH1 = SIM(S12, T, N) * IL;
+                                double PH2 = SIM(S13, T, N) * IL;
+                                double PH3 = SIM(S14, T, N) * IL;
                                 A2 = A2 + PH2 + PH3;
                                 A3 = A3 + PH1 - 2 * PH2;
                                 A4 = A4 + PH2 - PH3;
                             }
                             if (KK == NM - 1)
                             {
-                                A6 = F2 * SIM(S6, C, N);
-                                A61 = F2 * SIM(S61, C, N);
-                                A62 = F2 * SIM(S62, C, N);
+                                A6 = V2 * SIM(S6, T, N);
+                                A61 = V2 * SIM(S61, T, N);
+                                A62 = V2 * SIM(S62, T, N);
                             }
                         }
-                        else if (KK == NM - 1) A6 = SIM(S6, C, N);
+                        else if (KK == NM - 1) A6 = SIM(S6, T, N);
                         int IJ = IN + J_2;
                         int KJ = KN + J_2;
                         S[IJ, KJ - 2] = A1;
@@ -581,26 +603,26 @@ namespace _1_st_Model
             }
             for (int I = 0; I < NM; I++)
             {
-                HY1[I, 2] = 0;
+                UNK[I, 2] = 0;
             }
             for (int I = 0; I < NM; I++)
             {
                 int IN = I * N;
                 for (int J = 0; J < N; J++)
                 {
-                    HY1[I, J + 2] = XS[IN + J];
+                    UNK[I, J + 2] = XS[IN + J];
                 }
             }
             for (int I = 0; I < NM; I++)
             {
-                HY1[I, 0] = G2 * HY1[I, 3];
-                HY1[I, N3 - 1] = HY1[I, N1 - 1];
-                HY1[I, N4 - 1] = HY1[I, N - 1];
+                UNK[I, 0] = G2 * UNK[I, 3];
+                UNK[I, N3 - 1] = UNK[I, N1 - 1];
+                UNK[I, N4 - 1] = UNK[I, N - 1];
             }
-            X = HX1;
-            Y = HY1;
-            YF = HYF;
-            XF = HXF;
+            X = KN;
+            Y = UNK;
+            YF = RtY;
+            XF = RtX;
             return;
         }
     }

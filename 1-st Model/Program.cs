@@ -1,12 +1,11 @@
 ﻿using _1_st_Model;
 using System;
 using System.Globalization;
-using System.IO;
-using System.Runtime.Intrinsics.Arm;
+
 public class Program : ModelOne
 {
     // Точка входа программы.
-    static void Main(string[] args)
+    public void Main(string[] args)
     {
         // Initialize H array
         for (int i = 0; i < 12; i++)
@@ -57,7 +56,7 @@ public class Program : ModelOne
             // Read fourth line
             line = reader.ReadLine();
             parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            V2 = double.Parse(parts[0], customNumberFormat);
+            Lambda = double.Parse(parts[0], customNumberFormat);
             S = double.Parse(parts[1], customNumberFormat);
 
 
@@ -133,8 +132,8 @@ public class Program : ModelOne
         Console.WriteLine($"\nG(1)={G[0]:F2}, G(2)={G[1]:F2}, GF(1)={GF[0]:F2}, GF(2)={GF[1]:F2}, JF={JF}, IL={IL}");
         writer1.WriteLine($"\nG(1)={G[0]:F2}, G(2)={G[1]:F2}, GF(1)={GF[0]:F2}, GF(2)={GF[1]:F2}, JF={JF}, IL={IL}");
 
-        Console.WriteLine($"\nV2={V2:F3}, S={S:F3}");
-        writer1.WriteLine($"\nV2={V2:F3}, S={S:F3}");
+        Console.WriteLine($"\nV2={Lambda:F3}, S={S:F3}");
+        writer1.WriteLine($"\nV2={Lambda:F3}, S={S:F3}");
 
         Console.WriteLine($"\nWC0={WC0:F3}, WCE={WCE:F3}, DWC={DWC:F3}");
         writer1.WriteLine($"\nWC0={WC0:F3}, WCE={WCE:F3}, DWC={DWC:F3}");
@@ -164,7 +163,7 @@ public class Program : ModelOne
         writer1.Close();
 
         double SL = 0.5 / N;
-        VO = SL * SL;
+        V2 = SL * SL; 
         double SP = Math.PI * SL;
         int N1 = N + 1;
         int M1 = N + 4;
@@ -197,7 +196,7 @@ public class Program : ModelOne
         Cycle(ICON);
         Deflec(1);
         Deflec(2);
-        Thick();
+        Thickness();
 
         Console.WriteLine("Program completed.");
     }

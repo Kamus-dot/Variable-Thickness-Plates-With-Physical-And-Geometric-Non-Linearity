@@ -15,7 +15,7 @@ namespace _1_st_Model
         // NPL - режим вывода:
         // NPL = 0 - расчет только для верхней и нижней поверхностей
         // NPL = 1 - расчет для всех слоев по толщине
-        public static void Defnap(Func<double, double> PL, int IP, int NPL)
+        public void Defnap(Func<double, double> PL, int IP, int NPL)
         {
             double[,] DEF1 = new double[12, 12];
             double[,] STRDEF = new double[6, 12];
@@ -23,7 +23,7 @@ namespace _1_st_Model
             double HH = 0;
             int N1 = N + 1;
             int NT1 = NT + 1;
-            double V22 = Math.Sqrt(V2);
+            double V22 = Math.Sqrt(Lambda);
 
             double SIGB = 0;
             double SIGH = 0;
@@ -51,15 +51,15 @@ namespace _1_st_Model
                         int J2 = J + 2;
 
                         double D2X = (WXY[I2, J1] - 2 * WXY[I1, J1]
-                            + WXY[I, J1]) / VO - (W0[I2, J1] - 2 * W0[I1, J1]
-                            + W0[I, J1]) / VO;
+                            + WXY[I, J1]) / V2 - (W0[I2, J1] - 2 * W0[I1, J1]
+                            + W0[I, J1]) / V2;
 
                         double D2Y = (WXY[I1, J2] - 2 * WXY[I1, J1]
-                            + WXY[I1, J]) / VO - (W0[I1, J2] - 2 * W0[I1, J1]
-                            + W0[I1, J]) / VO;
+                            + WXY[I1, J]) / V2 - (W0[I1, J2] - 2 * W0[I1, J1]
+                            + W0[I1, J]) / V2;
 
                         double D2XY = (WXY[I2, J2] - WXY[I2, J] - WXY[I, J2]
-                            + WXY[I, J]) / 4 * VO;
+                            + WXY[I, J]) / 4 * V2;
 
                         if (NPL == 0) continue;
                         // Значение действительного прогиба, прикладываемой к 
@@ -68,13 +68,13 @@ namespace _1_st_Model
                         DY[I, J] = D2Y;
                         DXY[I, J] = D2XY;
 
-                        double T1 = (FXY[I1, J2] - 2 * FXY[I1, J1] + FXY[I1, J]) / VO
+                        double T1 = (FXY[I1, J2] - 2 * FXY[I1, J1] + FXY[I1, J]) / V2
                             + QL;
 
-                        double T2 = (FXY[I1, J2] - 2 * FXY[I1, J1] + FXY[I, J1]) / VO
+                        double T2 = (FXY[I1, J2] - 2 * FXY[I1, J1] + FXY[I, J1]) / V2
                             + QK * QL;
 
-                        S = -(FXY[I1, J2] - FXY[I2, J] - FXY[I, J2] + FXY[I, J]) / 4 * VO;
+                        S = -(FXY[I1, J2] - FXY[I2, J] - FXY[I, J2] + FXY[I, J]) / 4 * V2;
 
                         double H11 = H[I, J];
                         double C01 = E01[I, J];
@@ -90,10 +90,10 @@ namespace _1_st_Model
                         double B10 = (C11 / C01 + C10 / C00) / 2;
                         double B11 = (C11 / C01 - C10 / C00) / 2;
                         M01 = 0;
-                        double EXX1 = V2 * A1 * T1 + A2 * T2 + B10 * D2X
-                            + V2 * B11 * D2Y + M01 / C01;
-                        double EYY1 = V2 * A2 * T1 + A1 * T2 + B11 * D2X
-                            + V2 * B10 * D2Y + M01 / C01;
+                        double EXX1 = Lambda * A1 * T1 + A2 * T2 + B10 * D2X
+                            + Lambda * B11 * D2Y + M01 / C01;
+                        double EYY1 = Lambda * A2 * T1 + A1 * T2 + B11 * D2X
+                            + Lambda * B10 * D2Y + M01 / C01;
                         double EXY1 = (2 * S / C00 + 2 * (B10 - B11) * D2XY) * V22;
                         double Z = 0;
                         double EXX = 0;
@@ -115,7 +115,7 @@ namespace _1_st_Model
                             EI = Math.Sqrt(2 * (Math.Pow((EXX - EYY), 2)
                                 + Math.Pow((EYY - EZZ), 2) + Math.Pow((EXX - EZZ), 2)
                                 + 3 * Math.Pow(EXY, 2) / 2)) / 3;
-                            DEF[I, J] = EI;
+                            DEF_INT[I, J] = EI;
                             if (EI > SIGB) SIGB = EI;
                         }
                         if (NPL != 1)
@@ -131,7 +131,7 @@ namespace _1_st_Model
                             EI = Math.Sqrt(2 * (Math.Pow((EXX - EYY), 2)
                             + Math.Pow((EYY - EZZ), 2) + Math.Pow((EXX - EZZ), 2)
                             + 3 * Math.Pow(EXY, 2) / 2)) / 3;
-                            DEF[I, J] = EI;
+                            DEF_INT[I, J] = EI;
                             if (EI > SIGB) SIGB = EI;
                             STR[I, J] = PL(EI);
                         }
@@ -146,7 +146,7 @@ namespace _1_st_Model
                         for (int j = 0; j < 5; j++)
                         {
                             int KJ = j != 0 ? 2 * j - 1 : 0;
-                            STRDEF[i, KJ] = DEF[KI, KJ];
+                            STRDEF[i, KJ] = DEF_INT[KI, KJ];
                             STRDEF[i, 2 * (j + 1) - 1] = STR[KI, KJ];
                         }
                     }
@@ -158,7 +158,7 @@ namespace _1_st_Model
                     {
                         for (int j = 0; j < N1; j++)
                         {
-                            DEF[i, j] = DEF1[i, j];
+                            DEF_INT[i, j] = DEF1[i, j];
                             if (IP != 0)
                             {
                                 SIG = SIGH;

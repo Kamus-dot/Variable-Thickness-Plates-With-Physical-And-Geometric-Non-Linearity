@@ -25,9 +25,9 @@ namespace _1_st_Model
         // (Пример для (sin(a), sin(b)) => (1/2(cos(a-b)-(cos(a+b)))).
         // Проверка ортогональности производится здесь же;
 
-        // Норму определяю по обычному, через корень суммы квадратов элементов
+        // Норму определяю по-обычному, через корень суммы квадратов элементов
         // базиса.
-        public static double[,] Ort(double[,] Y, double A, double NORM)
+        public double[,] Ort(double[,] Y, double A, double NORM)
         {
             double[,] X = new double[4, 24];
             double[,] E = new double[4, 24];
@@ -82,7 +82,7 @@ namespace _1_st_Model
                     }
                 }
 
-                // Проверка ортогональности (выполняется)
+                // Проверка ортогональноси
 
                 double[] Ort_EE = new double[N1];
                 for (int i = 0; i < N1; i++)
@@ -92,7 +92,7 @@ namespace _1_st_Model
                 Console.WriteLine(SIM(Ort_EE, 1, M2));
 
                 // Перезаписывается для учёта граничного условия в 1-ой точке отчёта
-                // (предположительно)
+
                 for (int I = 0; I < NM; I++)
                 {
                     for (int J = 0; J < M1; J++)
@@ -110,14 +110,16 @@ namespace _1_st_Model
                     {
                         P += Math.Pow(E[I, J], 2);
                     }
-                    double Nr = Math.Sqrt(P);
+                    double NR = Math.Sqrt(P);
+
                     //for (int J = 0; J < N1; J++)
                     //{
                     //    E[I, J] = E[I, J] / N;
                     //}
+
                     for (int J = 0; J < M1; J++)
                     {
-                        Y[I, J + 1] = Y[I, J + 1] / Nr;
+                        Y[I, J + 1] = Y[I, J + 1] / NR;
                         
                     }
                 }

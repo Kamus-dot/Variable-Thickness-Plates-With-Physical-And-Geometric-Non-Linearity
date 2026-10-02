@@ -8,7 +8,7 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public static void Ytoch(double[,] X, double[,] Y, double A, int IWF)
+        public void Ytoch(double[,] X, double[,] Y, double A, int IWF)
         {
             int M1 = N + 4;
             for (int i = 0; i < M1; i++)

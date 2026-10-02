@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Math;
 
 namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public static void INTEGER(int IP, Func<double, double> SIG)
+        public void INTEGER(int IP, Func<double, double> SIG)
         {
             double[] S1 = new double[17];
             double[] S2 = new double[17];
@@ -16,15 +18,14 @@ namespace _1_st_Model
             double[] S4 = new double[17];
             double[] S5 = new double[17];
             double[] S6 = new double[17];
-            
-            double HH = 0;
+
             int N1 = N + 1;
             int NT1 = NT + 1;
             int N2 = N + 2;
 
             if (IP != 1)
             {
-                double V22 = Math.Sqrt(V2);
+                double V22 = Math.Sqrt(Lambda);
                 double GOM = 3.0 * OMY;
                 EMIN = EO;
 
@@ -38,164 +39,120 @@ namespace _1_st_Model
                         int J1 = J + 1;
                         int J2 = J + 2;
 
-                        // Расчёт деформаций срединной поверхности
+                        double D2X = (WXY[I2, J1] - 2 * WXY[I1, J1] + WXY[I, J1]) / V2;
+                        double D2Y = (WXY[I1, J2] - 2 * WXY[I1, J1] + WXY[I1, J]) / V2;
+                        double D2XY = (WXY[I2, J2] - WXY[I2, J] - WXY[I, J2] + WXY[I, J]) / (4 * V2);
 
-                        // Направление в сторону оси X
-                        double D2X = (WXY[I2, J1] - 2.0 * WXY[I1, J1] + WXY[I, J1]) / VO -
-                                    (W0[I2, J1] - 2.0 * W0[I1, J1] + W0[I, J1]) / VO;
+                        double D2PHIX = (Corrosion[I2, J1] - 2 * Corrosion[I1, J1] + Corrosion[I, J1]) / V2;
+                        double D2PHIY = (Corrosion[I1, J2] - 2 * Corrosion[I1, J1] + Corrosion[I1, J]) / V2;
+                        double D2PHIXY = (Corrosion[I2, J2] - Corrosion[I2, J] - Corrosion[I, J2] +
+                            Corrosion[I, J]) / (4 * V2);
 
-                        // Направление в сторону оси Y
-                        double D2Y = (WXY[I1, J2] - 2.0 * WXY[I1, J1] + WXY[I1, J]) / VO -
-                                    (W0[I1, J2] - 2.0 * W0[I1, J1] + W0[I1, J]) / VO;
+                        double D2FX = (FXY[I2, J1] - 2 * FXY[I1, J1] + FXY[I, J1]) / V2 + QL * QK;
+                        double D2FY = (FXY[I1, J2] - 2 * FXY[I1, J1] + FXY[I1, J]) / V2 + QL;
+                        double D2FXY = -(FXY[I2, J2] - FXY[I2, J] - FXY[I, J2] + FXY[I, J]) / (4 * V2);
 
-                        double D2XY = (WXY[I2, J2] - WXY[I2, J] - WXY[I, J2] + WXY[I, J]) / (4.0 * VO) -
-                                     (W0[I2, J2] - W0[I2, J] - W0[I, J2] + W0[I, J]) / (4.0 * VO);
+                        double A_tilde = 1 / (Pow(A[I, J], 2) - Pow(A_nu[I, J], 2));
 
+                        // Вычисление безразмерных деформаций
 
-                        double T2 = (FXY[I2, J1] - 2.0 * FXY[I1, J1] + FXY[I, J1]) / VO + QL * QK;
-                        double T1 = (FXY[I1, J2] - 2.0 * FXY[I1, J1] + FXY[I1, J]) / VO + QL;
-                        double S = -(FXY[I2, J2] - FXY[I2, J] - FXY[I, J2] + FXY[I, J]) / (4.0 * VO);
-
-                        double H11 = H[I, J];
-                        double C01 = E01[I, J];
-                        double C00 = E00[I, J];
-                        double C11 = E11[I, J];
-                        double C10 = E10[I, J];
-
-                        double A1 = (1.0 / C01 + 1.0 / C00) / 2.0;
-                        double A2 = (1.0 / C01 - 1.0 / C00) / 2.0;
-                        double B10 = (C11 / C01 + C10 / C00) / 2.0;
-                        double B11 = (C11 / C01 - C10 / C00) / 2.0;
-
-                        double M01 = 0.0;
-
-                        // Вычисление деформаций
-                        // V2 - коэффициент, необходимый для сохранения одинаковой раз-
-                        // мерности сетки
-                        double EXX1 = V2 * A1 * T1 + A2 * T2 + B10 * D2X + V2 * B11 * D2Y + M01 / C01;
-                        double EYY1 = V2 * A2 * T1 + A1 * T2 + B11 * D2X + V2 * B10 * D2Y + M01 / C01;
-                        double EXY1 = (2.0 * S / C00 + 2.0 * (B10 - B11) * D2XY) * V22;
+                        double EX_Memb = A_tilde * (V22 * A[I, J] * D2FX - A_nu[I, J] * D2FY);
+                        double EY_Memb = A_tilde * (A[I, J] * D2FY - V22 * A_nu[I, J] * D2FX);
+                        double EXY_Memb = Lambda * D2FXY / B[I, J];
 
                         // Толщина 1-ого слоя
-                        double HZ = H11 / NT;
+                        double HZ = H[I, J] / NT;
 
                         // Начальная координата 
-                        double Z = (HH - 1.0) * H11 / 2.0;
-
-                        int IS = 0;
-                        double E = 0;
+                        double Z = -H[I, J] / 2;
 
                         for (int K = 0; K < NT1; K++)
                         {
-                            double HP = 0.5 ; // - Коэффициент Пуассона 
-
                             // Деформация с учётом кривизны
-                            double EXX = EXX1 - Z * D2X;
-                            double EYY = EYY1 - Z * D2Y;
-                            double EXY = -2.0 * V22 * Z * D2XY + EXY1;
-
-                            // Поперечная деформация
-                            double EZZ = -HP * (EXX + EYY) / (1.0 - HP);
+                            double EX = EX_Memb - Z * (D2X + 0.5 * D2PHIX);
+                            double EY = EY_Memb - Z * (D2Y + 0.5 * D2PHIY);
+                            double EXY = -2 * Z * (D2XY + 0.5 * D2PHIY) + EXY_Memb;
 
                             // Интенсивность деформаций
-                            double EI = Math.Sqrt(2 * (Math.Pow((EXX - EYY), 2) + Math.Pow((EYY - EZZ), 2) +
-                                        Math.Pow((EXX - EZZ), 2)) + 3 * Math.Pow(EXY, 2) / 2.0) / 3.0;
+                            double EI = Sqrt(2 * (Pow((EX), 2) + Pow((EY), 2) + EX * EY
+                                + Pow(EXY, 2) / 4)) / 3;
+                            DEF_INT[I, J] = EI;
 
-                            // Секущий модуль
-                            double G = 0;
+                            double HP = 0; // - Коэффициент Пуассона 
+                            double G = 0; // - Модуль сдвига
+                            double E = 0; // - Модуль упругости  
 
-                            if (EI > ES)
+                            // Упругая область 
+                            if (EI <= 1e-10)
                             {
-                                IS++;
-                                G = SIG(EI) / (3 * EI);
+                                G = SS / (3 * ES);
                             }
                             else
                             {
-                                // Упругая область 
-                                if (EI <= 1e-10)
-                                {
-                                    G = SS / (3.0 * ES);
-                                }
-                                else
-                                {
-                                    G = SIG(EI) / (3 * EI);
-                                }
+                                G = SIG(EI) / (3 * EI);
                             }
 
                             double GOK = GOM + G;
-                            // Эффективный модуль
-                            E = 3 * GOM * G / GOK;
 
-                            double R1 = E / (1.0 + HP);
-                            double R2 = E / (1.0 - HP);
+                            E = 3 * GOM * G / GOK;
+                            HP = (GOM - 2 * G) / 2 * (2 * OMY + G);
+
+                            double R1 = E / (1 - Pow(HP, 2));
+                            double R2 = E / (1 + HP);
 
                             S1[K] = R1;
-                            S2[K] = R2;
-                            S3[K] = R1 * Z;
-                            S4[K] = R2 * Z;
-                            S5[K] = R2 * Z * Z;
-                            S6[K] = R1 * Z * Z;
+                            S2[K] = R1 * HP;
+                            S3[K] = R1 * Pow(Z, 2);
+                            S4[K] = R1 * Pow(Z, 2) * HP;
+                            S5[K] = R2 / 2;
+                            S6[K] = R2 * Pow(Z, 2);
                             Z += HZ;
                         }
 
-                        EN[I, J] = E;
-                        if (E < EMIN) EMIN = E;
-
-                        E00[I, J] = SIM(S1, H11, NT);
-                        E01[I, J] = SIM(S2, H11, NT);
-                        E10[I, J] = SIM(S3, H11, NT);
-                        E11[I, J] = SIM(S4, H11, NT);
-                        E21[I, J] = SIM(S5, H11, NT);
-                        E20[I, J] = SIM(S6, H11, NT);
+                        A[I, J] = SIM(S1, H[I, J], NT);
+                        A_nu[I, J] = SIM(S2, H[I, J], NT);
+                        AZ[I, J] = SIM(S3, H[I, J], NT);
+                        AZ_nu[I, J] = SIM(S4, H[I, J], NT);
+                        B[I, J] = SIM(S5, H[I, J], NT);
+                        BZ[I, J] = SIM(S6, H[I, J], NT);
                     }
                 }
             }
             else
             {
-                double G11 = EO / (1 + HUO);
-                double G21 = EO / (1 - HUO);
-
                 for (int I = 0; I < N1; I++)
                 {
                     for (int J = 0; J < N1; J++)
                     {
-                        // Коэффициент ослабления
-                        double F = 1.0 - (1.0 - EV) * QR(I, J, IV);
-                        double G1 = G11 * F;
-                        double G2 = G21 * F;
-                        double H11 = H[I, J];
-                        double PHH = Math.Pow(H11, 3) / (3.0 * Math.Pow(2.0 - HH, 2));
-
-                        E00[I, J] = G1 * H11;
-                        E01[I, J] = G2 * H11;
-                        E10[I, J] = G1 * H11 * H11 * HH / 2.0;
-                        E11[I, J] = G2 * H11 * H11 * HH / 2.0;
-                        E21[I, J] = G2 * PHH;
-                        E20[I, J] = G1 * PHH;
+                        A[I, J] = H[I, J] * EO / (1 - Pow(HUO, 2));
+                        A_nu[I, J] = H[I, J] * EO * HUO / (1 - Pow(HUO, 2));
+                        AZ[I, J] = Pow(H[I, J], 3) * EO / (3 * (1 - Pow(HUO, 2)));
+                        AZ_nu[I, J] = Pow(H[I, J], 3) * EO * HUO / (1 - Pow(HUO, 2));
+                        B[I, J] = H[I, J] * EO / (2 * (1 + HUO));
+                        BZ[I, J] = Pow(H[I, J], 3) * EO / (3 * (1 + HUO));
                         EN[I, J] = EO;
                     }
                 }
-
                 EMIN = EO;
             }
 
             // Экстраполяция значений матриц жесткости на граничные узлы
             for (int I = 0; I < N2; I++)
             {
-                E00[I, N2 - 1] = E00[I, N - 1];
-                E00[N2 - 1, I] = E00[N - 1, I];
-                E01[I, N2 - 1] = E01[I, N - 1];
-                E01[N2 - 1, I] = E01[N - 1, I];
-                E10[I, N2 - 1] = E10[I, N - 1];
-                E10[N2 - 1, I] = E10[N - 1, I];
-                E11[I, N2 - 1] = E11[I, N - 1];
-                E11[N2 - 1, I] = E11[N - 1, I];
-                E21[I, N2 - 1] = E21[I, N - 1];
-                E21[N2 - 1, I] = E21[N - 1, I];
-                E20[I, N2 - 1] = E20[I, N - 1];
-                E20[N2 - 1, I] = E20[N - 1, I];
-                EN[I, N2 - 1] = EN[I, N - 1];
-                EN[N2 - 1, I] = EN[N - 1, I];
+                A[I, N1] = A[I, N - 1];
+                A[N1, I] = A[N - 1, I];
+                A_nu[I, N1] = A_nu[I, N - 1];
+                A_nu[N1, I] = A_nu[N - 1, I];
+                AZ[I, N1] = AZ[I, N - 1];
+                AZ[N1, I] = AZ[N - 1, I];
+                AZ_nu[I, N1] = AZ_nu[I, N - 1];
+                AZ_nu[N1, I] = AZ_nu[N - 1, I];
+                B[I, N1] = B[I, N - 1];
+                B[N1, I] = B[N - 1, I];
+                BZ[I, N1] = BZ[I, N - 1];
+                BZ[N1, I] = BZ[N - 1, I];
+                EN[I, N1] = EN[I, N - 1];
+                EN[N1, I] = EN[N - 1, I];
             }
         }
     }

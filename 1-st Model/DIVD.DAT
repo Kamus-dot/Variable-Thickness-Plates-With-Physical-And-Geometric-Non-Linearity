@@ -1,12 +1,12 @@
  2 8 2 0.03   0.03                           NM   N   NT   EPSV   EPSP  
  2.56  0.28  1.94    0.69   2.07             EO   HUO   OMY   ES   SS
--1. -1.  1.  1.  1   1                       G(0)  G(1)  GF(0)  GF(1)  JF IL
- 1.0   0.0   0                               V2   S   IOPT 
- 0.0   7.5   0.5                             WC0   WCE   DWC
-   1.00  300.000  30.                        QP0   QPE   DQP 
-  -1.0   -10.0    -1.0                       QL0   QPE   DQL 
- 1 8 0.0  1.0  0.0  0.0  0.57                IPL  ICON   QK   HH   SKX  SKY  G1
-0.0 0.0 0.0                                  H1   H2   H3
+-1 -1  1  1  1   1                           G(0)  G(1)  GF(0)  GF(1)  JF IL
+ 1   0   0                                   V2   S   IOPT 
+ 0   7.5   0.5                             WC0   WCE   DWC
+ 1  300  30                        QP0   QPE   DQP 
+  -1   -10    -1                       QL0   QPE   DQL 
+ 1 8 0  1  0  0  0.57                IPL  ICON   QK   HH   SKX  SKY  G1
+0 0 0                                  H1   H2   H3
  2 5 7                                       K1   K2   K3
  3 6 9                                       K1T   K2T   K3T
   1      4                                   EV   IV
@@ -48,4 +48,3 @@
      
      IPL - вычисление с продольной нагрузкой или поперечной
      
-

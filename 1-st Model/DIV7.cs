@@ -9,7 +9,7 @@ namespace _1_st_Model
     public partial class ModelOne
     {
         // Вызывается в случае физической и (или) геометрической линейности
-        public static void Varite()
+        public void Varite()
         {
             double[,] WT = new double[14, 14];
             double[,] FT = new double[14, 14];

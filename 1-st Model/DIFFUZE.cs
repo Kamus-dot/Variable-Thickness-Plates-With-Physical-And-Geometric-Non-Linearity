@@ -23,7 +23,7 @@ namespace _1_st_Model
             double KSI = 0.00022;
             double TM = 0.64;
             double DELT = 0.08;
-            double V22 = Math.Sqrt(V2);
+            double V22 = Math.Sqrt(Lambda);
             Q = 2.56;
 
             using (StreamWriter file1 = new StreamWriter("T.DAT", true))
@@ -95,15 +95,15 @@ namespace _1_st_Model
                             int J1 = J + 1;
                             int J2 = J + 2;
 
-                            double D2X = (WXY[I2, J1] - 2.0 * WXY[I1, J1] + WXY[I, J1]) / VO -
-                                          (W0[I2, J1] - 2.0 * W0[I1, J1] + W0[I, J1]) / VO;
-                            double D2Y = (WXY[I1, J2] - 2.0 * WXY[I1, J1] + WXY[I1, J]) / VO -
-                                          (W0[I1, J2] - 2.0 * W0[I1, J1] + W0[I1, J]) / VO;
-                            double D2XY = (WXY[I2, J2] - WXY[I2, J] - WXY[I, J2] + WXY[I, J]) / (4.0 * VO) -
-                                          (W0[I2, J2] - W0[I2, J] - W0[I, J2] + W0[I, J]) / (4.0 * VO);
-                            T1 = (FXY[I1, J2] - 2.0 * FXY[I1, J1] + FXY[I1, J]) / VO + QL;
-                            T2 = (FXY[I2, J1] - 2.0 * FXY[I1, J1] + FXY[I, J1]) / VO + QK * QL;
-                            double S = -(FXY[I2, J2] - FXY[I2, J] - FXY[I, J2] + FXY[I, J]) / (4.0 * VO);
+                            double D2X = (WXY[I2, J1] - 2.0 * WXY[I1, J1] + WXY[I, J1]) / V2 -
+                                          (W0[I2, J1] - 2.0 * W0[I1, J1] + W0[I, J1]) / V2;
+                            double D2Y = (WXY[I1, J2] - 2.0 * WXY[I1, J1] + WXY[I1, J]) / V2 -
+                                          (W0[I1, J2] - 2.0 * W0[I1, J1] + W0[I1, J]) / V2;
+                            double D2XY = (WXY[I2, J2] - WXY[I2, J] - WXY[I, J2] + WXY[I, J]) / (4.0 * V2) -
+                                          (W0[I2, J2] - W0[I2, J] - W0[I, J2] + W0[I, J]) / (4.0 * V2);
+                            T1 = (FXY[I1, J2] - 2.0 * FXY[I1, J1] + FXY[I1, J]) / V2 + QL;
+                            T2 = (FXY[I2, J1] - 2.0 * FXY[I1, J1] + FXY[I, J1]) / V2 + QK * QL;
+                            double S = -(FXY[I2, J2] - FXY[I2, J] - FXY[I, J2] + FXY[I, J]) / (4.0 * V2);
 
                             double H11 = H[I, J];
                             double C01 = E01[I, J];
@@ -118,8 +118,8 @@ namespace _1_st_Model
                             double B11 = (C11 / C01 - C10 / C00) / 2.0;
                             double M01 = 0.0;
 
-                            double EXX1 = V2 * A1 * T1 + A2 * T2 + B10 * D2X + V2 * B11 * D2Y + M01 / C01;
-                            double EYY1 = V2 * A2 * T1 + A1 * T2 + B11 * D2X + V2 * B10 * D2Y + M01 / C01;
+                            double EXX1 = Lambda * A1 * T1 + A2 * T2 + B10 * D2X + Lambda * B11 * D2Y + M01 / C01;
+                            double EYY1 = Lambda * A2 * T1 + A1 * T2 + B11 * D2X + Lambda * B10 * D2Y + M01 / C01;
                             double EXY1 = (2.0 * S / C00 + 2.0 * (B10 - B11) * D2XY) * V22;
                             double EXX = EXX1 - Z * D2X;
                             double EYY = EYY1 - Z * D2Y;
@@ -139,7 +139,7 @@ namespace _1_st_Model
                             SVO[I, J] = MVO;
 
                             SEN[I, J] = WEN;
-                            DEF[I, J] = EI;
+                            DEF_INT[I, J] = EI;
 
                             double SI;
                             if (JF == 0) SI = 3 * EI;

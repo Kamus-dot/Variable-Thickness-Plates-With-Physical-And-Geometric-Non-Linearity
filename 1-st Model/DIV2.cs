@@ -8,13 +8,12 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public static double PLAST(double x)
+        public double PLAST(double x)
         {
-            // Физически линейная
+            // Физически линейная задача
             if (JF == 0)
             {
-                x = 3 * x;
-                return x;
+                return 3 * x;
             }
             if (x >= ES)
             {

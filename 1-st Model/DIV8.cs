@@ -8,7 +8,7 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public static void TempQ(int ICON)
+        public void TempQ(int ICON)
         {
 
             double[,] Q1 = new double[12, 12];

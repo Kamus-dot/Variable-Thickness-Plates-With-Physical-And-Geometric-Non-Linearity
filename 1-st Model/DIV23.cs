@@ -19,8 +19,8 @@ namespace _1_st_Model
             double[] S4 = new double[12];
             double[] S5 = new double[12];
 
-            double C1 = V2;
-            if (IXY != 1) C1 = 1.0 / V2;
+            double C1 = Lambda;
+            if (IXY != 1) C1 = 1.0 / Lambda;
 
             int N1 = N + 1;
             int N2 = N + 2;

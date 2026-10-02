@@ -9,7 +9,7 @@ namespace _1_st_Model
     public partial class ModelOne
     {
         // Вызывается в случае физически нелинейной задачи
-        public static void Param()
+        public void Param()
         {
             INTEGER(1, PLAST);
             Varite();
@@ -31,7 +31,7 @@ namespace _1_st_Model
             while (P > EPSP);
             return;
         }
-        public static void Par()
+        public void Par()
         {
             INTEGER(0, PLAST);
             double P2 = EMIN;

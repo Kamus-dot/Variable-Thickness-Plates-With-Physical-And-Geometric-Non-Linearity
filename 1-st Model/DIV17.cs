@@ -8,7 +8,7 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public static void Cycle(int ICON)
+        public void Cycle(int ICON)
         {
             int N1 = N + 1;
             int N2 = N + 2;
