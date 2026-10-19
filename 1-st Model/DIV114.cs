@@ -18,7 +18,7 @@ namespace _1_st_Model
             {
                 for (int J = 0; J < M; J++)
                 {
-                    S1[J] = H[I + 1, J + 1];
+                    S1[J] = H[I, J];
                 }
                 S2[I] = SIM(S1, C, N);
             }

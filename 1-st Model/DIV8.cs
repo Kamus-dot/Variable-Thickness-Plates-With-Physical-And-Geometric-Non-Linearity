@@ -11,20 +11,17 @@ namespace _1_st_Model
         public void TempQ(int ICON)
         {
 
-            double[,] Q1 = new double[12, 12];
             int N1 = N + 1;
+            double[,] Q1 = new double[N1, N1];
             int N2 = N + 2;
             int K = ICON;
 
-            for (int i = 0; i < N2; i++)
+            for (int i = 0; i < N1; i++)
             {
-                for (int j = 0; j < N2; j++)
+                for (int j = 0; j < N1; j++)
                 {
                     Q1[i, j] = QR(i, j, K) * Q;
-                    if (EV >= 1) break;
-                    Q1[i, j] = (1 - QR(i, j, IV) * Q);
                 }
-                if (EV >= 1) break;
             }
 
             for (int i = 0; i < N; i++)

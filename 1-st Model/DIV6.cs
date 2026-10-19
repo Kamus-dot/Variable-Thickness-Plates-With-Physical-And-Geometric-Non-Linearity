@@ -8,29 +8,32 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public static void Deflec(int IWF)
+        public void Deflec(int IWF)
         {
-            int M1 = N + 4;
+            int N1 = N + 1;
 
-            for (int i = 0; i < M1; i++)
+            for (int i = 0; i < N1; i++)
             {
-                for (int j = 0; j < M1; j++)
+                for (int j = 0; j < N1; j++)
                 {
-                    double SP1 = 0.0;
-                    double SP2 = 0.0;
-                    for (int k = 0; k < NM; k++)
+                    double SP = 0;
+                    if (IWF == 1)
                     {
-                        SP1 += X[k, i] * Y[k, j];
-                        SP2 += XF[k, i] * YF[k, j];
+                        for (int k = 0; k < NM; k++)
+                        {
+                            SP += X[k, i + 1] * Y[k, j + 1];
+                        }
+                        WXY[i, j] = SP;
                     }
-                    if (IWF == 2)
+                    else if (IWF == 2)
                     {
-                        FXY[i, j] = SP2;
+                        for (int k = 0; k < NM; k++)
+                        {
+                            SP += XF[k, i + 1] * YF[k, j + 1];
+                        }
+                        FXY[i, j] = SP;
                     }
-                    else
-                    {
-                        WXY[i, j] = SP1;
-                    }
+                    else return;
                 }
             }
         }

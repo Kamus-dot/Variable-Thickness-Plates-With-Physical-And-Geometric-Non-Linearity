@@ -9,207 +9,142 @@ namespace _1_st_Model
     public partial class ModelOne
     {
         // Матрицы коэффициентов физических параметров пластины
-        public double[,] A = new double[14, 14];
-        public double[,] A_nu = new double[14, 14];
-        public double[,] AZ = new double[14, 14];
-        public double[,] AZ_nu = new double[14, 14];
-        public double[,] B = new double[14, 14];
-        public double[,] BZ = new double[14, 14];
-
+        public double[,] A { get; set; }
+        public double[,] A_nu { get; set; }
+        public double[,] AZ { get; set; }
+        public double[,] AZ_nu { get; set; }
+        public double[,] B { get; set; }
+        public double[,] BZ { get; set; }
         // Базисные функции прогибов по осям
-        public double[,] X = new double[4, 14];
-        public double[,] Y = new double[4, 14];
-
+        public double[,] X { get; set; }
+        public double[,] Y { get; set; }
         // Базисные функции усилий
-        public double[,] XF = new double[4, 14];
-        public double[,] YF = new double[4, 14];
-
+        public double[,] XF { get; set; }
+        public double[,] YF { get; set; }
         // Lambda = a/b (или наоборот) - Коэффициент прямоугольности пластинки
-        public double Lambda;
-
-        // V1 - шаг сетки
-        public double V2;
-
+        public double Lambda { get; set; }
+        // V2 - шаг сетки в квадрате
+        public double V2 { get; set; }
         // Число приближений в методе вариационных итераций (<= 4)
-        public int NM;
-
+        public int NM { get; set; }
         // Число шагов конечно-разностной сетки по одной из координат
-        public int N = 12; 
-
+        public int N { get; set; } = 12;
         // Число слоёв по толщине
-        public int NT;
-
-        public double EMIN;
-
+        public int NT { get; set; }
+        public double EMIN { get; set; }
         // Погрешность вычислений в методе переменных параметров упругости
-        public double EPSP;
-
+        public double EPSP { get; set; }
         // Погрешность вычислений в методе вариационных итераций
-        public double EPSV;
-
+        public double EPSV { get; set; }
         // Модуль упругости в физически линейной задаче
-        public double EO;
-
+        public double EO { get; set; }
         // Коэффициент Пуассона в физически линейной задаче
-        public double HUO;
-
+        public double HUO { get; set; }
         // Объемный модуль упругости
-        public double OMY;
-
+        public double OMY { get; set; }
         // Деформация текучести
-        public double ES;
-
+        public double ES { get; set; }
         // Напряжение текучести
-        public double SS;
-
+        public double SS { get; set; }
         // Поперечная нагрузка 
-        public double Q;
-
+        public double Q { get; set; }
+        // Размерность приложенной нагрузки на пластину
+        public int ICON { get; set; }
         // Модуль cдвига
-        public double[] G = new double[2];
-        public double[] GF = new double[2];
-
+        public double[] G { get; set; } = new double[2];
+        public double[] GF { get; set; } = new double[2];
         // Поперечная нагрузка для уравнения прогибов
-        public double[,] QTW = new double[12, 12];
-
+        public double[,] QTW { get; set; }
         // Нагрузка для уравнения функции усилий (равна 0)
-        public double[,] QTF = new double[12, 12];
-
+        public double[,] QTF { get; set; }
         // Толщина пластинки
-        public double[,] H = new double[12, 12];
-
+        public double[,] H { get; set; }
         // Поля прогибов
-        public double[,] WXY = new double[14, 14];
-
+        public double[,] WXY { get; set; }
         // Функция усилий (Функция Эри)
-        public double[,] FXY = new double[14, 14];
-
+        public double[,] FXY { get; set; }
         // JF = 0 - физически линейная задача, JF = 1 - нелинейная)
-        public int JF;
-
+        public int JF { get; set; }
         // IL = 0 - геометрически линейная задача, IL = 1 - нелинейная)
-        public int IL;
-
-        // Интенсивность
-        public double[,] DEF_INT = new double[12, 12];
-
-        // 
-        public double[,] STR = new double[12, 12];
-        public double SIG;
-        public double[,] SQ = new double[12, 12];
-        public double[,] DX = new double[12, 12];
-        public double[,] DY = new double[12, 12];
-        public double[,] DXY = new double[12, 12];
-
-        // Размер площадки в центре пластинки,к которой прикладывается нагрузка
-        public int ICON = 0;
-
-        // Модуль упругости в зоне квадратного отверстия в центре пластинки
-        public double EV;
-
-        // Размер отверстия в центре пластинки
-        public int IV;
-
-        // Начальное значение прогиба в центре пластинки
-        public double WC0;
-
-        // Конечное значение прогиба в центре пластинки
-        public double WCE;
-
-        // Шаг изменения прогиба в центре
-        public double DWC;
-
+        public int IL { get; set; }
+        // Интенсивность деформации
+        public double[,,] DEF_INT { get; set; }
+        // Интенсивность напряжения
+        public double[,] TENS_INT { get; set; }
+        // Среднее напряжение
+        public double[,] TENS_AVG { get; set; }
         // Начальное значение поперечной нагрузки
-        public double QP0;
-
+        public double QP0 { get; set; }
         // Конечное значение поперечной нагрузки
-        public double QPE;
-
+        public double QPE { get; set; }
         // Шаг изменения поперечной нагрузки
-        public double DQP;
-
+        public double DQP { get; set; }
         // Начальное значение продольной нагрузки
-        public double QL0;
-
+        public double QL0 { get; set; }
         // Конечное значение продольной нагрузки
-        public double QLE;
-
+        public double QLE { get; set; }
         // Шаг изменения продольной нагрузки
-        public double DQL;
-
+        public double DQL { get; set; }
         // Если IPL = 1 - нагрузка поперечная
         // Если IPL = 4 - нагрузка продольная
-        public int IPL;
-
+        public int IPL { get; set; }
         // НН = 0 - Верхняя и нижняя поверхности пластинки плоские,
         // НН = 1 - Верхняя плоская, нижняя переменной толщины
-        public double HH;
-
+        public double HH { get; set; }
         // Поперечная нагрузка
-        public double QP;
-
+        public double QP { get; set; }
         // Продольная нагрузка
-        public double QL;
-
+        public double QL { get; set; }
         // Прогиб в центре
-        public double WC;
-
+        public double WC { get; set; }
         // QK = 0 - Одноостное сжатие
         // QK = 1 - Двуостное сжатие
-        public double QK;
-
+        public double QK { get; set; }
         // Модуль сдвига
-        public double G1;
-
-        // Значение начального прогиба в центре пластинки
-        public double S;
-
-        // Толщины пересекающихся ребер
-        public double H1, H2, H3;
-
-        // Начало первого, второго, третьего ребер в узлах сетки
-        public int K1, K2, K3;
-
-        // Концы ребер в узлах сетки по ширине
-        public int K1T, K2T, K3T;
-
-        internal static double[,] EN = new double[12, 12];
-        internal static double[,] SEN = new double[12, 12];
-        public double WEN;
-
+        public double G1 { get; set; }
+        public double[,] SEN { get; set; }
         // Энергия
-        internal static double[,] SVO = new double[12, 12];
+        public double[,] SVO { get; set; }
         public double MVO;
-
-        // Значение начального прогиба, выражающееся произведением функций
-        // начального прогиба по осям
-        internal static double[,] W0 = new double[14, 14];
-
-        // Функции начального прогиба по осям
-        internal static double[] X0 = new double[14];
-        internal static double[] Y0 = new double[14];
-
         // Безразмерный шаг по времени 
-        public double Delta_t;
-
+        public double Delta_t { get; set; }
+        // Шаг по времени
+        public int TimeStep { get; set; }
         // Матрица изменений толщины в результате коррозии
-        public double[,] Corrosion = new double[14, 14];
+        public double[,] Corrosion { get; set; }
 
-        public double OS;
-        public int KLN;
-        public int IN;
-        public int NX;
-        internal static double[] SUM = new double[50];
-        public double STEP;
-        internal static double[] X_ = new double[50];
-        internal static double[,] X1 = new double[50, 50];
-        public   double R;
-        public int NIT;
-        public int NI;
-        public double SR;
-        public double RM1;
-        public double EPS;
-        public int NS;
-        public int NR;
+        public ModelOne()
+        {
+            Initialize();
+
+            int N4 = N + 4;
+            int N1 = N + 1;
+
+            X = new double[NM, N4];
+            Y = new double[NM, N4];
+            XF = new double[NM, N4];
+            YF = new double[NM, N4];
+
+            A = new double[N4, N4];
+            A_nu = new double[N4, N4];
+            AZ = new double[N4, N4];
+            AZ_nu = new double[N4, N4];
+            B = new double[N4, N4];
+            BZ = new double[N4, N4];
+            Corrosion = new double[N4, N4];
+
+            H = new double[N1, N1];
+            QTW = new double[N1, N1];
+            QTF = new double[N1, N1];
+            WXY = new double[N1, N1];
+            FXY = new double[N1, N1];
+            SVO = new double[N1, N1];
+            SEN = new double[N1, N1];
+
+            TENS_INT = new double[N1, N1];
+            TENS_AVG = new double[N1, N1];
+
+            DEF_INT = new double[N1, N1, NT + 1];
+        }
     }
 }

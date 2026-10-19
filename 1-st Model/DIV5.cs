@@ -8,9 +8,9 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public void Ytoch(double[,] X, double[,] Y, double A, int IWF)
+        public double[,] Ytoch(double[,] X, double[,] Y, double A)
         {
-            int M1 = N + 4;
+            int M1 = N + 1;
             for (int i = 0; i < M1; i++)
             {
                 for (int j = 0; j < M1; j++)
@@ -19,6 +19,7 @@ namespace _1_st_Model
                     Y[i, j] = X[i, j];
                 }
             }
+            return Y;
         }
     }
 }

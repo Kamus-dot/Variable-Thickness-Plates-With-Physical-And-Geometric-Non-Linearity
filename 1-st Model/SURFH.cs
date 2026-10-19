@@ -8,7 +8,7 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public static void SURFH()
+        public void SURFH()
         {
             using (StreamWriter fileH = new StreamWriter("H.DAT"))
             {

@@ -10,10 +10,10 @@ namespace _1_st_Model
     {
         public static double Volume(double[,] H, int N)
         {
-            double[] S1 = new double[12];
-            double[] S2 = new double[12];
-            double C = 0;
             int M = N + 1;
+            double[] S1 = new double[M];
+            double[] S2 = new double[M];
+            double C = 0;
             for (int I = 0; I < M; I++)
             {
                 for (int J = 0; J < M; J++)

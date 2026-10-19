@@ -12,7 +12,7 @@ namespace _1_st_Model
         // NORM - флаг для нормализации базиса:
         // 0 - нормировать, 1 - не нормировать
 
-        // Данный метод использует алгоритм ортогонализации Грама-Шмидта
+        // Данный метод использ ует алгоритм ортогонализации Грама-Шмидта
         // базисов X или Y (данные массивы содержат NM количество
         // дискретных функций (2N точек), которые задаются в Program.cs).
         // Скалярное произведение задаётся определённым интегралом произведений
@@ -29,30 +29,30 @@ namespace _1_st_Model
         // базиса.
         public double[,] Ort(double[,] Y, double A, double NORM)
         {
-            double[,] X = new double[4, 24];
-            double[,] E = new double[4, 24];
-            double[] XE = new double[24];
+            int N1 = N + 1;
+            int N21 = 2 * N + 1;
+            int N22 = 2 * N1;
+            int N3 = N + 3;
+            double[,] X = new double[NM, N22];
+            double[,] E = new double[NM, N22];
+            double[] XE = new double[N21];
 
             // Новый базис
-            double[] EE = new double[24];
+            double[] EE = new double[N21];
 
-            double[] SL = new double[10];
-            double[] S = new double[10];
-
-            int M1 = N + 1;
-            int N1 = 2 * N + 1;
-            int N2 = 2 * M1;
-            int M2 = 2 * N;
+            double[] SL = new double[N21];
+            double[] S = new double[N21];
+            int M2 = 2 * N; 
             for (int I = 0; I < NM; I++)
             {
-                for (int J = 0; J < M1; J++)
+                for (int J = 0; J < N1; J++)
                 {
                     X[I, J] = Y[I, J + 1];
-                    X[I, N2 - J - 1] = Y[I, J + 1];
+                    X[I, N22 - J - 1] = Y[I, J + 1];
                 }
             }
             // Задание 1-ого нового базисного элемента
-            for (int I = 0; I < N1; I++)
+            for (int I = 0; I < N21; I++)
             {
                 E[0, I] = X[0, I];
             }
@@ -60,14 +60,14 @@ namespace _1_st_Model
             {
                 for (int K = 1; K < NM; K++)
                 {
-                    for (int L = 0; L < N1; L++)
+                    for (int L = 0; L < N21; L++)
                     {
                         double F = 0;
                         for (int I = 0; I < K; I++)
                         {
                             if (L == 0)
                             {
-                                for (int M = 0; M < N1; M++)
+                                for (int M = 0; M < N21; M++)
                                 {
                                     XE[M] = X[K, M] * E[I, M];
                                     EE[M] = Math.Pow(X[I, M], 2);
@@ -84,18 +84,18 @@ namespace _1_st_Model
 
                 // Проверка ортогональноси
 
-                double[] Ort_EE = new double[N1];
-                for (int i = 0; i < N1; i++)
-                {
-                    Ort_EE[i] = E[0, i] * E[2, i];
-                }
-                Console.WriteLine(SIM(Ort_EE, 1, M2));
+                //double[] Ort_EE = new double[N21];
+                //for (int i = 0; i < N21; i++)
+                //{
+                //    Ort_EE[i] = E[0, i] * E[1, i];
+                //}
+                //Console.WriteLine(SIM(Ort_EE, 1, M2));
 
                 // Перезаписывается для учёта граничного условия в 1-ой точке отчёта
 
                 for (int I = 0; I < NM; I++)
                 {
-                    for (int J = 0; J < M1; J++)
+                    for (int J = 0; J < N3; J++)
                     {
                         Y[I, J + 1] = E[I, J];
                     }
@@ -106,7 +106,7 @@ namespace _1_st_Model
                 for (int I = 0; I < NM; I++)
                 {
                     double P = 0;
-                    for (int J = 0; J < N1; J++)
+                    for (int J = 0; J < N21; J++)
                     {
                         P += Math.Pow(E[I, J], 2);
                     }
@@ -117,10 +117,9 @@ namespace _1_st_Model
                     //    E[I, J] = E[I, J] / N;
                     //}
 
-                    for (int J = 0; J < M1; J++)
+                    for (int J = 0; J < N3; J++)
                     {
                         Y[I, J + 1] = Y[I, J + 1] / NR;
-                        
                     }
                 }
 

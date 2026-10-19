@@ -11,19 +11,16 @@ namespace _1_st_Model
         // Вызывается в случае физически нелинейной задачи
         public void Param()
         {
-            INTEGER(1, PLAST);
             Varite();
-            int MM = JF + 1;
 
-            INTEGER(MM, PLAST);
+            INTEGER(0, PLAST);
             double P2 = EMIN;
             double P = 0;
             do
             {
                 double P1 = P2;
-                if (IL == 0) Varite();
-                if (IL != 0) Var();
                 if (JF == 0) return;
+                Var();
                 INTEGER(2, PLAST);
                 P2 = EMIN;
                 P = Math.Abs((P1 - P2) / P2);
@@ -39,9 +36,8 @@ namespace _1_st_Model
             do
             {
                 double P1 = P2;
-                if (IL == 0) Varite();
-                if (IL != 0) Var();
                 if (JF == 0) return;
+                Var();
                 INTEGER(2, PLAST);
                 P2 = EMIN;
                 P = Math.Abs((P1 - P2) / P2);

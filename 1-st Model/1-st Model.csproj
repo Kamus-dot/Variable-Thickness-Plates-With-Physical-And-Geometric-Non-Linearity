@@ -10,7 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="bin\Debug\net9.0\DIVD.DAT" />
+    <None Remove="DIVD.DAT" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="bin\Debug\net9.0\DIVD.DAT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
   </ItemGroup>
 
 </Project>

@@ -8,9 +8,9 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
-        public static void Prisv(double[,] X, double[,] Y)
+        public double[,] Prisv(ref double[,] X, double[,] Y)
         {
-            int M1 = N + 4;
+            int M1 = N + 1;
             for (int i = 0; i < M1; i++)
             {
                 for (int j = 0; j < M1; j++)
@@ -18,6 +18,7 @@ namespace _1_st_Model
                     X[i, j] = Y[i, j];
                 }
             }
+            return X;
         }
     }
 }
