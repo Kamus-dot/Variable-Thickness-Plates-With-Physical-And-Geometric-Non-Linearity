@@ -8,6 +8,11 @@ namespace _1_st_Model
 {
     public partial class ModelOne
     {
+        public double QR(int I, int J, int K)
+        {
+            if (I >= N - K && J >= N - K) return 1;
+            return 0;
+        }
         public void TempQ(int ICON)
         {
 

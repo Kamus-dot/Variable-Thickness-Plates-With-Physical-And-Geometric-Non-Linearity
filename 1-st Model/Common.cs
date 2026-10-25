@@ -50,7 +50,7 @@ namespace _1_st_Model
         public double Q { get; set; }
         // Размерность приложенной нагрузки на пластину
         public int ICON { get; set; }
-        // Модуль cдвига
+        // Коэффиценты граничных условий
         public double[] G { get; set; } = new double[2];
         public double[] GF { get; set; } = new double[2];
         // Поперечная нагрузка для уравнения прогибов
@@ -120,10 +120,10 @@ namespace _1_st_Model
             int N4 = N + 4;
             int N1 = N + 1;
 
-            X = new double[NM, N4];
-            Y = new double[NM, N4];
-            XF = new double[NM, N4];
-            YF = new double[NM, N4];
+            X = new double[NT, N4];
+            Y = new double[NT, N4];
+            XF = new double[NT, N4];
+            YF = new double[NT, N4];
 
             A = new double[N4, N4];
             A_nu = new double[N4, N4];
