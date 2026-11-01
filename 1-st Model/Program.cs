@@ -1,13 +1,13 @@
-﻿using _1_st_Model;
+﻿using CorrosionModel;
 using System;
 using System.Globalization;
 
-public class Program : ModelOne
+public class Program
 {
     // Точка входа программы.
-    public static void Main(string[] args)
+    public static void Main()
     {
-        ModelOne model = new();
+        MathCorrosionModel model = new();
 
         int N1 = model.N + 1;
         int M1 = model.N + 3;
@@ -20,10 +20,9 @@ public class Program : ModelOne
             }
         }
 
-        if (model.JF == 0) model.NT = 2;
+        if (model.JF) model.NT = 2;
 
         double SL = 0.5 / model.N;
-        model.V2 = SL * SL;
         double SP = Math.PI * SL;
 
         for (int K = 0; K < model.NM; K++)
@@ -36,19 +35,16 @@ public class Program : ModelOne
                 model.XF[K, I + 1] = P;
             }
         }
-        model.X = model.Ort(model.X, 1, 0);
-        model.XF = model.Ort(model.XF, 1, 0);
-        model.Delta_t = 0.2;
-
+        model.Delta_t = 0.1;
+        double TimeStep = 0;
         int NT1 = model.NT + 1;
         for (int i = 1; i <= 5; i++)
         {
-            model.TimeStep = i;
+            TimeStep = i * model.Delta_t;
             model.Cycle(model.ICON);
             model.Deflec(1);
             model.Deflec(2);
-            model.DeformationIntesivity();
-            model.Thickness(model.TimeStep, model.PLAST);
+            model.Thickness(TimeStep, model.PLAST);
         }
         Console.WriteLine("Program completed.");
     }

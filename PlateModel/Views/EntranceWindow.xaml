@@ -1,0 +1,114 @@
+﻿<Window x:Class="PlateModel.EntranceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PlateModel.Models"
+        mc:Ignorable="d"
+        Title="EntranceWindow" Height="650" Width="475" MaxWidth="475">
+    <Window.DataContext>
+        <local:Plate/>
+    </Window.DataContext>
+    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+        <Grid>  
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Column="1" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column ="1" Content="Введите исходные данные в безразмерном виде:" />
+            </Grid>
+            <StackPanel Grid.Column="1" Grid.Row="1">
+                <Label Content="Начальная толщина:"/>
+                <TextBox Name="Thickness" Text="{Binding ThickValue, Mode=OneWayToSource, FallbackValue='', }"/>
+                <Label Content="Разбиение пластинки по плану:"/>
+                <TextBox Name="EquipartitionXY" Text="{Binding N, Mode=OneWayToSource, FallbackValue=''}"/>
+                <Label Content="Разбиение пластинки по толщине:"/>
+                <TextBox Name="EquipartitionZ" Text="{Binding NT, Mode=OneWayToSource, FallbackValue=''}"/>
+                <Label Content="Отношение длины к ширине пластины:"/>
+                <TextBox Name="AspectRatio" Text="{Binding V2, Mode=OneWayToSource, FallbackValue=''}"/>
+                <Label Content="Коэффициент Пуассона:"/>
+                <TextBox Name="Poisson" Text="{Binding HUO, Mode=OneWayToSource, FallbackValue=''}"/>
+                <Label Content="Модуль упругости:"/>
+                <TextBox Name="ResilienceModulus" Text="{Binding EO, Mode=OneWayToSource, FallbackValue=''}"/>
+                <Label Content="Погрешность вычислений в методе вариационных итераций:"/>
+                <TextBox Name="VariationImprecision" Text="{Binding ThickValue}"/>
+                <Label Content="Деформация текучести:"/>
+                <TextBox Name="YieldStrength" Text="{Binding ThickValue}"/>
+                <Label Content="Объемный модуль упругости:"/>
+                <TextBox Name="BulkModulus" Text="{Binding ThickValue}"/>
+                <Label Content="Погрешность вычислений в методе переменных параметров упругости:"/>
+                <TextBox Name="ResilienceImprecision" Text="{Binding ThickValue}"/>
+                <Label Content="Напряжение текучести:"/>
+                <TextBox Name="YieldStress" Text="{Binding ThickValue}"/>
+                <Label Content="Модуль сдвига:"/>
+                <TextBox Name="ShearModulus" Text="{Binding ThickValue}"/>
+                <Label Content="Модель коррозийного износа:"/>
+                <ComboBox Name="CorrosionModel">
+                    <ComboBoxItem>Модель Долинского</ComboBoxItem>
+                    <ComboBoxItem>Модель Гутмана</ComboBoxItem>
+                </ComboBox>
+                <Label Content="Шаг по времени :"/>
+                <TextBox Name="TimeStep" Text="{Binding ThickValue}"/>
+                <Label Content="Количество шагов по времени:"/>
+                <TextBox Name="TimeStepAmount" Text="{Binding ThickValue}"/>
+                <Label Content="Физическая линейность:"/>
+                <ComboBox Name="PhisicalNonlinearity">
+                    <ComboBoxItem>Да</ComboBoxItem>
+                    <ComboBoxItem>Нет</ComboBoxItem>
+                </ComboBox>
+                <Label Content="Геометрическая линейность:"/>
+                <ComboBox Name="GeometricalNonlinearity">
+                    <ComboBoxItem>Да</ComboBoxItem>
+                    <ComboBoxItem>Нет</ComboBoxItem>
+                </ComboBox>
+                <Label Content="Вид закрепления на границе:"/>
+                <ComboBox Name="BoundaryCondition">
+                    <ComboBoxItem>Шарнирное опирание</ComboBoxItem>
+                    <ComboBoxItem>Жёсткое защемление</ComboBoxItem>
+                </ComboBox>
+                <Label Content="Вид прикладываемой внешней нагрузки"/>
+                <ComboBox Name="ExternalLoading">
+                    <ComboBoxItem>Продольная нагрузка</ComboBoxItem>
+                    <ComboBoxItem>Поперечная нагрузка</ComboBoxItem>
+                    <ComboBoxItem>Продольная и поперечная нагрузка</ComboBoxItem>
+                </ComboBox>
+                <Label Content="Вид сжатия:"/>
+                <ComboBox Name="Compression">
+                    <ComboBoxItem>Одноостное</ComboBoxItem>
+                    <ComboBoxItem>Двухостное</ComboBoxItem>
+                </ComboBox>
+                <Label Content="Разменость продольной нагрузки:"/>
+                <TextBox Name="LoadingDimension" Text="{Binding ThickValue}"/>
+                <Label Content="Начальное значение поперечной нагрузки:"/>
+                <TextBox Name="TransverseStart" Text="{Binding ThickValue}"/>
+                <Label Content="Шаг изменения поперечной нагрузки:"/>
+                <TextBox Name="TransverseStep" Text="{Binding ThickValue}"/>
+                <Label Content="Конечное значение поперечной нагрузки:"/>
+                <TextBox Name="TransverseFinal" Text="{Binding ThickValue}"/>
+                <Label Content="Начальное значение продольной нагрузки:"/>
+                <TextBox Name="LongitudinalStart" Text="{Binding ThickValue}"/>
+                <Label Content="Шаг изменения продольной нагрузки:"/>
+                <TextBox Name="LongitudinalStep" Text="{Binding ThickValue}"/>
+                <Label Content="Конечное значение продольной нагрузки:"/>
+                <TextBox Name="LongitudinalFinal"/>
+
+                <StackPanel Grid.Row="9" 
+                            HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,5">
+                    <Button x:Name="btn" Content="Применить" 
+                        Margin="5,0,5,0" Padding="4, 2" Click="btn_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Window>
