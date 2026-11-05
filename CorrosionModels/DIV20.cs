@@ -1,45 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static System.Math;
 
 namespace CorrosionModel
 {
     public partial class MathCorrosionModel
     {
-        //public void Start()
-        //{
-        //    int VN = NX;
-        //    double STEP1 = STEP / (VN * Math.Sqrt(2)) * (Math.Sqrt(VN + 1) + VN - 1);
-        //    double STEP2 = STEP / (VN * Math.Sqrt(2)) * (Math.Sqrt(VN + 1) - 1);
+        /// <summary>
+        /// Модель Гутмана
+        /// </summary>
+        /// <param name="t">Значение времени</param>
+        public void GutmanThickness(double t)
+        {
+            // Полученные экспериментальные данные
+            double Gamma = 0.00588;
+            double Alpha = 0.48;
+            double Theta = 0.091;
 
-        //    double[,] A = new double[50, 50];
+            int N1 = N + 1;
 
-        //    // Initialize A array
-        //    for (int J = 0; J < NX; J++)
-        //    {
-        //        A[0, J] = 0;
-        //    }
+            for (int i = 0; i < N1; i++)
+            {
+                for (int j = 0; j < N1; j++)
+                {
+                    double Func = Alpha * Exp(Theta * t);
+                    double Sigma = TENS_AVG[i, j];
+                    double corr = Func * Exp(Gamma * Sigma) * Delta_t;
+                    Corrosion[i + 1, j + 1] += corr;
+                    H[i, j] -= corr;
+                }
+            }
+            CorrosionExtrapolation();
+        }
+        private double GutmanThickness(double t, double Tens)
+        {
+            // Полученные экспериментальные данные
+            double Gamma = 0.00588;
+            double Alpha = 0.48;
+            double Theta = 0.091;
 
-        //    for (int I = 1; I < K1; I++)
-        //    {
-        //        for (int J = 0; J < NX; J++)
-        //        {
-        //            A[I, J] = STEP2;
-        //            int L = I - 1;
-        //            A[I, L] = STEP1;
-        //        }
-        //    }
-
-        //    // Update X1 array
-        //    for (int I = 0; I < K1; I++)
-        //    {
-        //        for (int J = 0; J < NX; J++)
-        //        {
-        //            X1[I, J] = X_[J] + A[I, J];
-        //        }
-        //    }
-        //}
+            return Alpha * Exp(Theta * t) * Exp(Gamma * Tens) * Delta_t;
+        }
     }
 }

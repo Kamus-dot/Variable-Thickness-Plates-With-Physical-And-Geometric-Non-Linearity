@@ -19,14 +19,13 @@ namespace CorrosionModel
             int M = N + 1;
             double[] S1 = new double[M];
             double[] S2 = new double[M];
-            double C = 0;
+            double C = 1;
             for (int I = 0; I < M; I++)
             {
                 for (int J = 0; J < M; J++)
                 {
                     S1[J] = H[I, J];
                 }
-                C = 1;
                 S2[I] = SIM(S1, C, N);
             }
             return SIM(S2, C, N);

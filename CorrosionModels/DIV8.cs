@@ -34,15 +34,15 @@ namespace CorrosionModel
                 for (int j = 0; j < N; j++)
                 {
                     int J1 = j + 1;
-                    QTW[I1, J1] = -Q1[I1, J1];
+                    QTW[I1, J1] = Q1[I1, J1];
                     QTF[I1, J1] = 0;
                 }
             }
 
             for (int i = 0; i < N1; i++)
             {
-                QTW[0, i] = -Q1[0, i];
-                QTW[i, 0] = -Q1[i, 0];
+                QTW[0, i] = Q1[0, i];
+                QTW[i, 0] = Q1[i, 0];
             }
             return;
         }

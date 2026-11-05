@@ -19,6 +19,7 @@ public class Program
                 model.H[i, j] = 0.749;
             }
         }
+        model.H0 = 0.749;
 
         if (model.JF) model.NT = 2;
 
@@ -35,17 +36,8 @@ public class Program
                 model.XF[K, I + 1] = P;
             }
         }
-        model.Delta_t = 0.1;
-        double TimeStep = 0;
-        int NT1 = model.NT + 1;
-        for (int i = 1; i <= 5; i++)
-        {
-            TimeStep = i * model.Delta_t;
-            model.Cycle(model.ICON);
-            model.Deflec(1);
-            model.Deflec(2);
-            model.Thickness(TimeStep, model.PLAST);
-        }
+        model.StartLoad();
+        model.Cycle(model.PLAST);
         Console.WriteLine("Program completed.");
     }
 }

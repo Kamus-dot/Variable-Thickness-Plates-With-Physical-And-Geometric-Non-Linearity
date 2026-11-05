@@ -40,6 +40,7 @@ namespace CorrosionModel
                 OMY = double.Parse(parts[2], customNumberFormat);
                 ES = double.Parse(parts[3], customNumberFormat);
                 SS = double.Parse(parts[4], customNumberFormat);
+                TensileStrength = double.Parse(parts[5], customNumberFormat);
 
                 line = reader.ReadLine();
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -53,7 +54,6 @@ namespace CorrosionModel
                 line = reader.ReadLine();
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 Lambda = double.Parse(parts[0], customNumberFormat);
-                Lambda_h = double.Parse(parts[1], customNumberFormat);
 
                 line = reader.ReadLine();
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -69,13 +69,14 @@ namespace CorrosionModel
 
                 line = reader.ReadLine();
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                IPL = int.Parse(parts[0]);
+                LoadType = (IPL)int.Parse(parts[0]);
                 ICON = int.Parse(parts[1]);
                 QK = double.Parse(parts[2], customNumberFormat);
                 G1 = double.Parse(parts[3], customNumberFormat);
-
             }
-
+            CorrosionModel = CorrosionModels.Dolinskyi;
+            Delta_t = 0.1;
+            TimeLimit = 70;
         }
     }
 }

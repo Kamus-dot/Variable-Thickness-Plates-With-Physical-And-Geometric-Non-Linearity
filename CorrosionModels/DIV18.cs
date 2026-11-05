@@ -23,13 +23,17 @@ namespace CorrosionModel
             int NT1 = NT + 1;
             double Lambda2 = Pow(Lambda, 2);
 
+            MaxEI = 0;
+            HMaxEI = 0;
+
             for (int i = 0; i < N1; i++)
             {
                 int I1 = i + 1;
                 for (int j = 0; j < N1; j++)
                 {
-                    W[I1, j + 1] = WXY[i, j];
-                    F[I1, j + 1] = FXY[i, j];
+                    int J1 = j + 1;
+                    W[I1, J1] = WXY[i, j];
+                    F[I1, J1] = FXY[i, j];
                 }
             }
             for (int i = 0; i < N3; i++)
@@ -68,8 +72,8 @@ namespace CorrosionModel
                     double D2PHIXY = (Corrosion[I2, J2] - Corrosion[I2, J] - Corrosion[I, J2] +
                         Corrosion[I, J]) / (4 * V2);
 
-                    double D2FX = (F[I2, J1] - 2 * F[I1, J1] + F[I, J1]) / V2 + QL * QK;
-                    double D2FY = (F[I1, J2] - 2 * F[I1, J1] + F[I1, J]) / V2 + QL;
+                    double D2FX = (F[I2, J1] - 2 * F[I1, J1] + F[I, J1]) / V2 - QL * QK;
+                    double D2FY = (F[I1, J2] - 2 * F[I1, J1] + F[I1, J]) / V2 - QL;
                     double D2FXY = -(F[I2, J2] - F[I2, J] - F[I, J2] + F[I, J]) / (4 * V2);
 
                     double A_tilde = 1 / (Pow(A[I1, J1], 2) - Pow(A_nu[I1, J1], 2));
@@ -84,7 +88,7 @@ namespace CorrosionModel
                     double HZ = H[I, J] / NT;
 
                     // Начальная координата 
-                    double Z = -H[I, J] / 2;
+                    double Z = -H0 / 2;
 
                     double EX, EY, EXY;
                     for (int K = 0; K < NT1; K++)
@@ -93,12 +97,19 @@ namespace CorrosionModel
                         EX = EX_Memb - Z * (D2X + 0.5 * D2PHIX);
                         EY = EY_Memb - Z * (D2Y + 0.5 * D2PHIY);
                         EXY = -2 * Z * (D2XY + 0.5 * D2PHIXY) + EXY_Memb;
+                        this.EX[I, J, K] = EX;
+                        this.EY[I, J, K] = EY;
+                        this.EXY[I, J, K] = EXY;
 
                         // Интенсивность деформаций
                         double EI = Sqrt(2 * (Pow((EX), 2) + Pow((EY), 2) + EX * EY
                             + Pow(EXY, 2) / 4)) / 3;
                         DEF_INT[I, J, K] = EI;
-                        if (EI > Max) Max = EI;
+                        if (EI > MaxEI)
+                        {
+                            MaxEI = EI;
+                            HMaxEI = H[I, J];
+                        }
                         Z += HZ;
                     }
                 }

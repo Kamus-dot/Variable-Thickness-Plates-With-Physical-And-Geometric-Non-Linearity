@@ -15,15 +15,14 @@ namespace CorrosionModel
         /// <summary>
         /// Решение задачи по поиску базисной функции
         /// </summary>
-        /// <param name="UNK">неизвестная функция</param>
-        /// <param name="KN">известная функция</param>
-        /// <param name="Rt_unk"> функции правой стороны, зависящие от X</param>
-        /// <param name="Rt_kn"> функции правой стороны, зависящие от X</param>
+        /// <param name="UNK">Неизвестная функция</param>
+        /// <param name="KN">Известная функция</param>
+        /// <param name="Rt_unk">Функция правой стороны по направлению UNK</param>
+        /// <param name="Rt_kn">Функция правой стороны по направлению KN</param>
         /// <param name="IXY">Флаг ориентации</param>
-        /// <param name="IWF">Флаг типа уравнения (1 - Уравнения прогибов, )</param>
+        /// <param name="IWF">Флаг типа уравнения (1 - Уравнение прогиба, 2 - Уравнение усилий)</param>
         /// <param name="IL">Флаг геометрической нелинейности</param>
         /// <returns></returns>
-
 
         public double[,] Gauss(double[,] UNK, double[,] KN, double[,] Rt_unk,
            double[,] Rt_kn, int IXY, int IWF, bool IL)
@@ -198,7 +197,7 @@ namespace CorrosionModel
                                 double D1AZY = (AZ[M3, L4] - AZ[M3, L2]) / 2;
                                 double D2AZY = (AZ[M3, L4] - 2 * AZ[M3, L3] + AZ[M3, L2]);
                                 double D1AZX = (AZ[M4, L3] - AZ[M2, L3]) / 2;
-                                double D2AZX = (AZ[M4, L3] - AZ[M3, L3] + AZ[M2, L3]);
+                                double D2AZX = (AZ[M4, L3] - 2 * AZ[M3, L3] + AZ[M2, L3]);
                                 double D1AZ_nuY = (AZ_nu[M3, L4] - AZ_nu[M3, L2]) / 2;
                                 double D2AZ_nuY = (AZ_nu[M3, L4] - 2 * AZ_nu[M3, L3] + AZ_nu[M3, L2]);
                                 double D1AZ_nuX = (AZ_nu[M4, L3] - AZ_nu[M2, L3]) / 2;
@@ -206,14 +205,12 @@ namespace CorrosionModel
                                 double D1BZY = (BZ[M3, L4] - BZ[M3, L2]) / 2;
                                 double D1BZX = (BZ[M4, L3] - BZ[M2, L3]) / 2;
                                 double D2BZXY = (BZ[M4, L4] - BZ[M4, L2] - BZ[M2, L4] + BZ[M2, L2]) / 4;
-                                //Console.WriteLine($"Разница: AZX:{D1AZX}");
-                                //Console.WriteLine($"Разница: BZX:{D1BZX}");
                                 // Коэффициенты для уравнения прогибов
-                                C4 = Lambda4 * AZ[I, J] * XK3 * XI3;
+                                C4 = Lambda4 * AZ[M3, L3] * XK3 * XI3;
                                 C3 = Lambda4 * 2 * D1AZY * XK3 * XI3;
-                                C2 = Lambda2 * ((2 * AZ_nu[I, J] + BZ[I, J]) * D2XK * XI3 + (2 * D1AZ_nuX +
+                                C2 = Lambda2 * ((2 * AZ_nu[M3, L3] + BZ[M3, L3]) * D2XK * XI3 + (2 * D1AZ_nuX +
                                     D1BZX) * D1XK * XI3 + (Lambda2 * D2AZY + D2AZ_nuX + V2 * QL1 * QL) * XI3 * XK3);
-                                C1 = Lambda2 * ((D1AZ_nuY + D1BZY) * D2XK * XI3 + D2BZXY * D1XK * XI3);
+                                C1 = Lambda2 * ((2 * D1AZ_nuY + D1BZY) * D2XK * XI3 + D2BZXY * D1XK * XI3);
                                 C = AZ[I, J] * D4XK * XI3 + 2 * D1AZX * D3XK + (D2AZX + Lambda2 * D2AZ_nuY +
                                     V2 * QL2 * QL) * D2XK * XI3;
 
@@ -223,9 +220,9 @@ namespace CorrosionModel
                                     double XF3 = Rt_kn[KK, I];
                                     double XF4 = Rt_kn[KK, I1];
 
-                                    double YF2 = Rt_unk[KK, I_1];
-                                    double YF3 = Rt_unk[KK, I];
-                                    double YF4 = Rt_unk[KK, I1];
+                                    double YF2 = Rt_unk[KK, J_1];
+                                    double YF3 = Rt_unk[KK, J];
+                                    double YF4 = Rt_unk[KK, J1];
 
                                     double D1XF = (XF4 - XF2) / 2;
                                     double D2XF = (XF4 - 2 * XF3 + XF2);
@@ -245,7 +242,7 @@ namespace CorrosionModel
                                         - Corrosion[M1, L3]) / 2;
                                     double D4PHIX = (Corrosion[M5, L3] - 4 * Corrosion[M4, L3] + 6 * Corrosion[M3, L3]
                                         - 4 * Corrosion[M2, L3] + Corrosion[M1, L3]);
-                                    double D2PHIY = (Corrosion[M3, L4] - 2 * Corrosion[M3, L3] + Corrosion[M1, L2]);
+                                    double D2PHIY = (Corrosion[M3, L4] - 2 * Corrosion[M3, L3] + Corrosion[M3, L2]);
                                     double D3PHIY = (Corrosion[M3, L5] - 2 * Corrosion[M3, L4] + 2 * Corrosion[M3, L2]
                                         - Corrosion[M3, L1]) / 2;
                                     double D4PHIY = (Corrosion[M3, L5] - 4 * Corrosion[M3, L4] + 6 * Corrosion[M3, L3]
@@ -264,8 +261,8 @@ namespace CorrosionModel
                                         D2PHIX + Lambda2 * ((2 * D1AZ_nuY + D1BZY) * D3PHIXXY + D2BZXY * D2PHIXY +
                                         (2 * AZ_nu[M3, L3] + BZ[M3, L3]) * D4PHIXXYY + (2 * D1AZ_nuX + D1BZX) *
                                         D3PHIXYY + (Lambda2 * D2AZ_nuY + D2AZ_nuX) * D2PHIY +
-                                        Lambda2 * 2 * D1AZY * D3PHIY + Lambda2 * AZ[M3, L3] * D4PHIY) * XI3) / 2
-                                        + V4 * QTW[M1, L1] * XI3;
+                                        Lambda2 * 2 * D1AZY * D3PHIY + Lambda2 * AZ[M3, L3] * D4PHIY)) * XI3 / 2
+                                        + V4 * QTW[M2, L2] * XI3;
                                 }
                             }
                             else
@@ -275,21 +272,21 @@ namespace CorrosionModel
                                 double tilde_A1Y = 2 / (Pow(A[M3, L2], 2) - Pow(A_nu[M3, L2], 2));
                                 double tilde_A3Y = 2 / (Pow(A[M3, L4], 2) - Pow(A_nu[M3, L4], 2));
                                 double tilde_A = 2 / (Pow(A[M3, L3], 2) - Pow(A_nu[M3, L3], 2));
-                                double D1AY = (A[M3, L4] - A[M3, L2]) / (2);
+                                double D1AY = (A[M3, L4] - A[M3, L2]) / 2;
                                 double D2AY = (A[M3, L4] - 2 * A[M3, L3] + A[M3, L2]);
-                                double D1AX = (A[M4, L3] - A[M2, L3]) / (2);
+                                double D1AX = (A[M4, L3] - A[M2, L3]) / 2;
                                 double D2AX = (A[M4, L3] - 2 * A[M3, L3] + A[M2, L3]);
-                                double D1A_nuY = (A_nu[M3, L4] - A_nu[M3, L2]) / (2);
+                                double D1A_nuY = (A_nu[M3, L4] - A_nu[M3, L2]) / 2;
                                 double D2A_nuY = (A_nu[M3, L4] - 2 * A_nu[M3, L3] + A_nu[M3, L2]);
-                                double D1A_nuX = (A_nu[M4, L3] - A_nu[M2, L3]) / (2);
+                                double D1A_nuX = (A_nu[M4, L3] - A_nu[M2, L3]) / 2;
                                 double D2A_nuX = (A_nu[M4, L3] - 2 * A_nu[M3, L3] + A_nu[M2, L3]);
-                                double D1BY = (B[M3, L4] - B[M3, L2]) / (2);
-                                double D1BX = (B[M4, L3] - B[M2, L3]) / (2);
+                                double D1BY = (B[M3, L4] - B[M3, L2]) / 2;
+                                double D1BX = (B[M4, L3] - B[M2, L3]) / 2;
                                 double D2BXY = (B[M4, L4] - B[M4, L2] - B[M2, L4] + B[M2, L2]) / 4;
                                 double D1tilde_AY = (tilde_A3Y - tilde_A1Y) / 2;
                                 double D2tilde_AY = (tilde_A3Y - 2 * tilde_A + tilde_A1Y);
                                 double D1tilde_AX = (tilde_A3X - tilde_A1X) / 2;
-                                double D2tilde_AX = (tilde_A3X - 2 * tilde_A + tilde_A1Y);
+                                double D2tilde_AX = (tilde_A3X - 2 * tilde_A + tilde_A1X);
 
                                 // Коэффициенты для уравненения усилий
                                 C4 = -Lambda4 * tilde_A * A[M3, L3] * XK3 * XI3;
@@ -299,7 +296,7 @@ namespace CorrosionModel
                                     (1 / Pow(B[M3, L3], 2)) * D1BX) * D1XK * XI3 - (Lambda2 * (D2tilde_AY *
                                     A[M3, L3] + 2 * D1tilde_AY * D1AY + D2AY * tilde_A) - D2tilde_AX *
                                     A_nu[M3, L3] - 2 * D1tilde_AX * D1A_nuX - D2A_nuX * tilde_A) * XK3 * XI3;
-                                C1 = Lambda2 * 2 * (D2tilde_AY * A_nu[M3, L3] + D1A_nuY * tilde_A +
+                                C1 = Lambda2 * 2 * (D1tilde_AY * A_nu[M3, L3] + D1A_nuY * tilde_A +
                                     (1 / Pow(B[M3, L3], 2)) * D1BY) * D2XK * XI3 - (2 / Pow(B[M3, L3], 2)) *
                                     ((2 / B[M3, L3]) * D1BX * D1BY - D2BXY) * D1XK * XI3;
                                 C = -tilde_A * A[M3, L3] * D4XK * XI3 - 2 * (D1tilde_AX * A[M3, L3] +
@@ -314,17 +311,17 @@ namespace CorrosionModel
                                         tilde_A) * V2 * QL1 * QL * XI3 + (D2tilde_AX * A_nu[M3, L3] +
                                         2 * D1tilde_AX * D1A_nuX + D2A_nuX * tilde_A - Lambda2 * (D2tilde_AY *
                                         A[M3, L3] + 2 * D1tilde_AY * D1AY + D2AY * tilde_A)) * V2 * QL * QL2 * XI3;
-                                }
 
+                                }
                                 if (!IL)
                                 {
                                     double XF2 = Rt_kn[KK, I_1];
                                     double XF3 = Rt_kn[KK, I];
                                     double XF4 = Rt_kn[KK, I1];
 
-                                    double YF2 = Rt_unk[KK, I_1];
-                                    double YF3 = Rt_unk[KK, I];
-                                    double YF4 = Rt_unk[KK, I1];
+                                    double YF2 = Rt_unk[KK, J_1];
+                                    double YF3 = Rt_unk[KK, J];
+                                    double YF4 = Rt_unk[KK, J1];
 
                                     double D1XF = (XF4 - XF2) / 2;
                                     double D2XF = (XF4 - 2 * XF3 + XF2);
@@ -332,19 +329,15 @@ namespace CorrosionModel
                                     double D1YF = (YF4 - YF2) / 2;
                                     double D2YF = (YF4 - 2 * YF3 + YF2);
 
-                                    Q += Lambda2 * (D2XF * D2YF * XF3 * YF3 - Pow(D1XF * D1YF, 2));
+                                    Q += Lambda2 * (D2XF * D2YF * XF3 * YF3 - Pow(D1XF * D1YF, 2)) * XI3;
                                 }
                             }
-
                             S1[I_1] = C4 + C3 / 2; // сократилось V3, осталось "2"
                             S2[I_1] = -4 * C4 - C3 + C2 + C1 / 2;
                             S3[I_1] = 6 * C4 - 2 * C2 + C;
                             S4[I_1] = -4 * C4 + C3 + C2 - C1 / 2;
                             S5[I_1] = C4 - C3 / 2;
-                            if (!IL || KK == NM - 1)
-                            {
-                                S6[I_1] = Q;
-                            }
+                            S6[I_1] = Q;
                         }
                         double T = 0.5;
                         double A1 = SIM(S1, T, N);
@@ -366,7 +359,7 @@ namespace CorrosionModel
                         }
                         else if (J_2 == 0)
                         {
-                            S[IJ, KJ] = A3;
+                            S[IJ, KJ] = A3 + G2 * A1;
                             S[IJ, KJ + 1] = A4;
                             S[IJ, KJ + 2] = A5;
                         }
@@ -382,16 +375,15 @@ namespace CorrosionModel
                             S[IJ, KJ - 2] = A1;
                             S[IJ, KJ - 1] = A2;
                             S[IJ, KJ] = A3;
-                            S[IJ, KJ + 1] = A4;
+                            S[IJ, KJ + 1] = A4 + G2 * A5;
                         }
                         else if (J_2 == N_1)
                         {
                             S[IJ, KJ - 2] = A1;
-                            S[IJ, KJ - 1] = A2;
-                            S[IJ, KJ] = A3;
+                            S[IJ, KJ - 1] = A2 + G2 * A5;
+                            S[IJ, KJ] = A3 + G2 * A4;
                         }
-                        XS[IJ] = A6;
-                        Array.Clear(S6);
+                        XS[IJ] += A6;
                     }
                 }
             }

@@ -107,8 +107,9 @@ namespace CorrosionModel
         /// </summary>
         public virtual double SS { get; set; }
         /// <summary>
-        /// Поперечная нагрузка 
+        /// Предел прочности пластины
         /// </summary>
+        public virtual double TensileStrength { get; set; }
         public double Q { get; set; }
         /// <summary>
         /// Размерность приложенной нагрузки на пластину
@@ -126,11 +127,15 @@ namespace CorrosionModel
         /// <summary>
         /// Поперечная нагрузка для уравнения прогибов
         /// </summary>
-        public double[,] QTW { get; set; }
+        private double[,] QTW { get; set; }
         /// <summary>
-        /// Нагрузка для уравнения функции усилий (равна 0)
+        /// Нагрузка для уравнения функции усилий
         /// </summary>
-        public double[,] QTF { get; set; }
+        private double[,] QTF { get; set; }
+        /// <summary>
+        /// Начальная толщина пластинки
+        /// </summary>
+        public double H0 { get; set; }
         /// <summary>
         /// Толщина пластинки
         /// </summary>
@@ -152,15 +157,26 @@ namespace CorrosionModel
         /// </summary>
         public virtual bool IL { get; set; }
         /// <summary>
-        /// Интенсивность деформации на каждом слое
+        /// Интенсивность деформации для каждной точки
         /// </summary>
         public double[,,] DEF_INT { get; set; }
         /// <summary>
         /// <summary>
-        /// Среднее напряжение
+        /// Среднее напряжение на верхнем слое пластины
         /// </summary>
         public double[,] TENS_AVG { get; set; }
         /// <summary>
+        /// Полные деформации пластины по направлению x
+        /// </summary>
+        public double[,,] EX { get; set; }
+        /// <summary>
+        /// Полные деформации пластины по направлению y
+        /// </summary>
+        public double[,,] EY { get; set; }
+        /// <summary>
+        /// Полные деформации сдвига
+        /// </summary>
+        public double[,,] EXY { get; set; }
         /// Начальное значение поперечной нагрузки
         /// </summary>
         public virtual double QP0 { get; set; }
@@ -185,16 +201,13 @@ namespace CorrosionModel
         /// </summary>
         public virtual double DQL { get; set; }
         /// <summary>
-        /// Если IPL = 1 - нагрузка поперечная
-        /// Если IPL = 4 - нагрузка продольная
+        /// Если IPL = 0 - нагрузка поперечная
+        /// <para>Если IPL = 1 - нагрузка продольная</para>
+        /// <para>Если IPL = 2 - нагрузка смешанная</para>
         /// </summary>
-        public virtual int IPL { get; set; }
-        private int _ipl;
-        /// <summary>
-        /// НН = 0 - Верхняя и нижняя поверхности пластинки плоские,
-        /// НН = 1 - Верхняя плоская, нижняя переменной толщины
-        /// </summary>
-        public double QP { get; set; }
+        /// 
+        public enum IPL { Transverse, Longitudinal, Both }
+        public IPL LoadType { get; set; }
         /// <summary>
         /// Продольная нагрузка
         /// </summary>
@@ -223,14 +236,21 @@ namespace CorrosionModel
         /// <summary>
         /// Количество шагов по времени
         /// </summary>
-        public virtual double TimeLimit { get; set;  }
+        public virtual double TimeLimit { get; set; }
         /// <summary>
         /// Матрица изменений толщины в результате коррозии
         /// </summary>
         private double[,] Corrosion { get; set; }
-        private int Flag = 0;
-        private double Max = 0;
-
+        /// <summary>
+        /// Матрица упругости 
+        /// </summary>
+        public enum CorrosionModels { Dolinskyi, Gutman };
+        public CorrosionModels CorrosionModel { get; set; }
+        private double[,,] Resilience { get; set; }
+        private double MaxEI;
+        private double HMaxEI;
+        private double MaxAVG;
+        private double HMaxAVG;
         public MathCorrosionModel()
         {
             Initialize();
@@ -262,12 +282,16 @@ namespace CorrosionModel
             TENS_AVG = new double[N1, N1];
 
             DEF_INT = new double[N1, N1, NT + 1];
+            EX = new double[N1, N1, NT + 1];
+            EY = new double[N1, N1, NT + 1];
+            EXY = new double[N1, N1, NT + 1];
+            Resilience = new double[N1, N1, NT + 1];
 
             V2 = Math.Pow((double)1 / (2 * N), 2);
         }
         private static void NormDoubleValidation(string valueName, double value, ref double _value)
         {
-            if (value >= 1 || value <= 0) throw new ArgumentException($"Ошибка в объявлении значения {valueName}");
+            if (value > 1 || value < 0) throw new ArgumentException($"Ошибка в объявлении значения {valueName}");
             _value = value;
         }
     }

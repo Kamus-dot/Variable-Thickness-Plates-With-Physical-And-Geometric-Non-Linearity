@@ -22,8 +22,7 @@ namespace CorrosionModel
             {
                 for (int j = 0; j < Y.GetLength(1); j++)
                 {
-                    X[i, j] = X[i, j] + A * (Y[i, j] - X[i, j]);
-                    Y[i, j] = X[i, j];
+                    Y[i, j] = X[i, j] + A * (Y[i, j] - X[i, j]);
                 }
             }
             return Y;

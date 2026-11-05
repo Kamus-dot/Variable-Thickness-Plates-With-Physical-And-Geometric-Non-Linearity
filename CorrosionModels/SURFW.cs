@@ -10,7 +10,7 @@ namespace CorrosionModel
     {
         public void SURFW()
         {
-            using (StreamWriter fileW = new StreamWriter("W.DAT"))
+            using (StreamWriter fileW = new("W.DAT"))
             {
             fileW.WriteLine("Прогиб:");
             int N1 = N + 1;

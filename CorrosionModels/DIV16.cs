@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Math;
@@ -15,14 +16,11 @@ namespace CorrosionModel
         /// </summary>
         /// <param name="JF">Флаг физической линейности</param>
         /// <param name="SIG">Зависимость напряжения от деформации</param>
-        public void INTEGER(bool JF, Func<double, double> SIG)
+        public void INTEGER(double omega, Func<double, double> SIG)
         {
 
             int N1 = N + 1;
             int NT1 = NT + 1;
-            int N2 = N + 2;
-            int N3 = N + 3;
-            int N4 = N + 4;
 
             double[] S1 = new double[NT1];
             double[] S2 = new double[NT1];
@@ -30,94 +28,124 @@ namespace CorrosionModel
             double[] S4 = new double[NT1];
             double[] S5 = new double[NT1];
             double[] S6 = new double[NT1];
+            double GOM = 3 * OMY;
+            EMIN = EO;
+            DeformationIntesivity();
 
-            if (!JF)
+            if (CorrosionModel == CorrosionModels.Gutman)
             {
-                double GOM = 3.0 * OMY;
-                EMIN = EO;
-                DeformationIntesivity();
+                MaxAVG = 0;
+                HMaxAVG = 0;
+            }
 
-                for (int I = 0; I < N1; I++)
+            for (int I = 0; I < N1; I++)
+            {
+                int I1 = I + 1;
+
+                for (int J = 0; J < N1; J++)
                 {
-                    int I1 = I + 1;
+                    int J1 = J + 1;
 
-                    for (int J = 0; J < N1; J++)
+                    // Толщина 1-ого слоя
+                    double HZ = H[I, J] / NT;
+
+                    // Начальная координата 
+                    double Z = -H0 / 2;
+
+                    double E; // - Модуль упругости  
+
+                    for (int K = 0; K < NT1; K++)
                     {
-                        int J1 = J + 1;
+                        // Деформация с учётом кривизны
+                        double EI = DEF_INT[I, J, K];
+                        double HP; // - Коэффициент Пуассона 
+                        double G; // - Модуль сдвига
 
-                        // Толщина 1-ого слоя
-                        double HZ = H[I, J] / NT;
-
-                        // Начальная координата 
-                        double Z = -H[I, J] / 2;
-
-                        double E = 0; // - Модуль упругости  
-
-                        for (int K = 0; K < NT1; K++)
+                        // Упругая область 
+                        if (EI <= 1e-10)
                         {
-                            // Деформация с учётом кривизны
-                            double EI = DEF_INT[I, J, K];
-                            double HP; // - Коэффициент Пуассона 
-                            double G; // - Модуль сдвига
-
-                            // Упругая область 
-                            if (EI <= 1e-10)
-                            {
-                                G = SS / (3 * ES);
-                            }
-                            else
-                            {
-                                G = SIG(EI) / (3 * EI);
-                            }
-
-                            double GOK = GOM + G;
-
-                            E = 3 * GOM * G / GOK;
-                            HP = (GOM - 2 * G) / (2 * (2 * OMY + G));
-
-                            double R1 = E / (1 - Pow(HP, 2));
-                            double R2 = E / (1 + HP);
-
-                            S1[K] = R1;
-                            S2[K] = R1 * HP;
-                            S3[K] = R1 * Pow(Z, 2);
-                            S4[K] = R1 * Pow(Z, 2) * HP;
-                            S5[K] = R2 / 2;
-                            S6[K] = R2 * Pow(Z, 2);
-                            Z += HZ;
-                            if (E < EMIN) EMIN = E;
+                            G = SS / (3 * ES);
+                        }
+                        else
+                        {
+                            G = SIG(EI) / (3 * EI);
                         }
 
-                        A[I1, J1] = SIM(S1, H[I, J], NT);
-                        A_nu[I1, J1] = SIM(S2, H[I, J], NT);
-                        AZ[I1, J1] = SIM(S3, H[I, J], NT);
-                        AZ_nu[I1, J1] = SIM(S4, H[I, J], NT);
-                        B[I1, J1] = SIM(S5, H[I, J], NT);
-                        BZ[I1, J1] = SIM(S6, H[I, J], NT);
+                        double GOK = GOM + G;
+
+                        E = 3 * GOM * G / GOK;
+                        E = (1 - omega) * Resilience[I, J, K] + omega * E;
+                        Resilience[I, J, K] = E;
+                        //HP = (GOM - 2 * G) / (2 * (2 * OMY + G));
+                        double G_relax = E * GOM / (3.0 * GOM - E);
+                        HP = (GOM - 2.0 * G_relax) / (2.0 * (2.0 * OMY + G_relax));
+
+                        double R1 = E / (1 - Pow(HP, 2));
+                        double R2 = E / (1 + HP);
+                        if (CorrosionModel == CorrosionModels.Gutman && K == NT)
+                        {
+                            double SigmaX, SigmaY, AvgTens;
+                            SigmaX = R1 * (EX[I, J, K] + HP * EY[I, J, K]);
+                            SigmaY = R1 * (EY[I, J, K] + HP * EX[I, J, K]);
+                            AvgTens = (SigmaX + SigmaY) / 3;
+                            TENS_AVG[I, J] = AvgTens;
+                            if (AvgTens > MaxAVG)
+                            {
+                                MaxAVG = AvgTens;
+                                HMaxAVG = H[I, J];
+                            }
+                        }
+
+                        S1[K] = R1;
+                        S2[K] = R1 * HP;
+                        S3[K] = R1 * Pow(Z, 2);
+                        S4[K] = R1 * Pow(Z, 2) * HP;
+                        S5[K] = R2 / 2;
+                        S6[K] = R2 * Pow(Z, 2);
+                        Z += HZ;
+                        if (E < EMIN) EMIN = E;
                     }
+
+                    A[I1, J1] = SIM(S1, H[I, J], NT);
+                    A_nu[I1, J1] = SIM(S2, H[I, J], NT);
+                    AZ[I1, J1] = SIM(S3, H[I, J], NT);
+                    AZ_nu[I1, J1] = SIM(S4, H[I, J], NT);
+                    B[I1, J1] = SIM(S5, H[I, J], NT);
+                    BZ[I1, J1] = SIM(S6, H[I, J], NT);
                 }
             }
-            else
+            Extrapolation();
+        }
+
+        public void INTEGER()
+        {
+            int N1 = N + 1;
+            for (int I = 0; I < N1; I++)
             {
-                for (int I = 0; I < N1; I++)
+                int I1 = I + 1;
+                for (int J = 0; J < N1; J++)
                 {
-                    int I1 = I + 1;
-                    for (int J = 0; J < N1; J++)
-                    {
-                        int J1 = J + 1;
+                    int J1 = J + 1;
+                    for (int K = 0; K < NT + 1; K++) { Resilience[I, J, K] = EO; }
 
-                        A[I1, J1] = H[I, J] * EO / (1 - Pow(HUO, 2));
-                        A_nu[I1, J1] = H[I, J] * EO * HUO / (1 - Pow(HUO, 2));
-                        AZ[I1, J1] = Pow(H[I, J], 3) * EO / (3 * (1 - Pow(HUO, 2)));
-                        AZ_nu[I1, J1] = Pow(H[I, J], 3) * EO * HUO / (1 - Pow(HUO, 2));
-                        B[I1, J1] = H[I, J] * EO / (2 * (1 + HUO));
-                        BZ[I1, J1] = Pow(H[I, J], 3) * EO / (3 * (1 + HUO));
-                    }
+                    A[I1, J1] = H[I, J] * EO / (1 - Pow(HUO, 2));
+                    A_nu[I1, J1] = H[I, J] * EO * HUO / (1 - Pow(HUO, 2));
+                    AZ[I1, J1] = Pow(H[I, J], 3) * EO / (3 * (1 - Pow(HUO, 2)));
+                    AZ_nu[I1, J1] = Pow(H[I, J], 3) * EO * HUO / (1 - Pow(HUO, 2));
+                    B[I1, J1] = H[I, J] * EO / (2 * (1 + HUO));
+                    BZ[I1, J1] = Pow(H[I, J], 3) * EO / (3 * (1 + HUO));
                 }
-                EMIN = EO;
             }
+            EMIN = EO;
+            Extrapolation();
+        }
+        private void Extrapolation()
+        {
+            int N1 = N + 1;
+            int N2 = N + 2;
+            int N3 = N + 3;
+            int N4 = N + 4;
 
-            // Экстраполяция значений матриц жесткости на граничные узлы
             for (int I = 0; I < N4; I++)
             {
                 A[I, N2] = A[I, N1];
@@ -166,3 +194,4 @@ namespace CorrosionModel
         }
     }
 }
+
