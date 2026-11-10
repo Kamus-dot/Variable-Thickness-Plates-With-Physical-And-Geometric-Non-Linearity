@@ -33,7 +33,7 @@ namespace CorrosionModel
             int N4 = N + 4;
             int N_2 = N - 2;
             int N_1 = N - 1;
-            int IK = N * NM;
+            int IK = N * NT;
 
             double[] S1 = new double[N1];
             double[] S2 = new double[N1];
@@ -102,7 +102,7 @@ namespace CorrosionModel
             double V4 = Pow(V2, 2);
 
             // Экстраполяция и задание начальных значений функций прогиба
-            for (int I = 0; I < NM; I++)
+            for (int I = 0; I < NT; I++)
             {
                 KN[I, 0] = G1 * KN[I, 2];
                 KN[I, N2] = KN[I, N1];
@@ -115,7 +115,7 @@ namespace CorrosionModel
                 Rt_unk[I, N3] = Rt_unk[I, N];
             }
 
-            for (int II = 0; II < NM; II++)
+            for (int II = 0; II < NT; II++)
             {
                 for (int I = 0; I < N4; I++)
                 {
@@ -125,7 +125,7 @@ namespace CorrosionModel
                 int IIN = II * N;
 
 
-                for (int KK = 0; KK < NM; KK++)
+                for (int KK = 0; KK < NT; KK++)
                 {
                     int KKN = KK * N;
 
@@ -235,7 +235,7 @@ namespace CorrosionModel
                                     C2 -= Lambda2 * XK3 * D2XF * YF3 * XI3;
                                 }
 
-                                if (KK == NM - 1)
+                                if (KK == NT - 1)
                                 {
                                     double D2PHIX = (Corrosion[M4, L3] - 2 * Corrosion[M3, L3] + Corrosion[M2, L3]);
                                     double D3PHIX = (Corrosion[M5, L3] - 2 * Corrosion[M4, L3] + 2 * Corrosion[M2, L3]
@@ -304,7 +304,7 @@ namespace CorrosionModel
                                     * D1AX + D2AX * tilde_A + Lambda2 * (D2tilde_AY * A_nu[M3, L3] - 2 * D1tilde_AY
                                     * D1A_nuY - D2A_nuY * tilde_A)) * D2XK * XI3;
 
-                                if (KK == NM - 1)
+                                if (KK == NT - 1)
                                 {
                                     Q = (Lambda2 * (D2tilde_AY * A_nu[M3, L3] + 2 * D1tilde_AY * D1A_nuY + D2A_nuY *
                                         tilde_A) - D2tilde_AX * A[M3, L3] - 2 * D1tilde_AX * D1AX - D2AX *

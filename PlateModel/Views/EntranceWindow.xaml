@@ -1,114 +1,332 @@
-﻿<Window x:Class="PlateModel.EntranceWindow"
+<Window x:Class="WPFPlateModel.EntranceWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PlateModel.Models"
+        xmlns:local="clr-namespace:WPFPlateModel.ViewModels"
+        xmlns:vm="clr-namespace:WPFPlateModel.ViewModels"
+        xmlns:cnvtr="clr-namespace:WPFPlateModel.Converters"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="EntranceWindow" Height="650" Width="475" MaxWidth="475">
-    <Window.DataContext>
-        <local:Plate/>
-    </Window.DataContext>
-    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
-        <Grid>  
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Column="1" Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column ="1" Content="Введите исходные данные в безразмерном виде:" />
-            </Grid>
-            <StackPanel Grid.Column="1" Grid.Row="1">
-                <Label Content="Начальная толщина:"/>
-                <TextBox Name="Thickness" Text="{Binding ThickValue, Mode=OneWayToSource, FallbackValue='', }"/>
-                <Label Content="Разбиение пластинки по плану:"/>
-                <TextBox Name="EquipartitionXY" Text="{Binding N, Mode=OneWayToSource, FallbackValue=''}"/>
-                <Label Content="Разбиение пластинки по толщине:"/>
-                <TextBox Name="EquipartitionZ" Text="{Binding NT, Mode=OneWayToSource, FallbackValue=''}"/>
-                <Label Content="Отношение длины к ширине пластины:"/>
-                <TextBox Name="AspectRatio" Text="{Binding V2, Mode=OneWayToSource, FallbackValue=''}"/>
-                <Label Content="Коэффициент Пуассона:"/>
-                <TextBox Name="Poisson" Text="{Binding HUO, Mode=OneWayToSource, FallbackValue=''}"/>
-                <Label Content="Модуль упругости:"/>
-                <TextBox Name="ResilienceModulus" Text="{Binding EO, Mode=OneWayToSource, FallbackValue=''}"/>
-                <Label Content="Погрешность вычислений в методе вариационных итераций:"/>
-                <TextBox Name="VariationImprecision" Text="{Binding ThickValue}"/>
-                <Label Content="Деформация текучести:"/>
-                <TextBox Name="YieldStrength" Text="{Binding ThickValue}"/>
-                <Label Content="Объемный модуль упругости:"/>
-                <TextBox Name="BulkModulus" Text="{Binding ThickValue}"/>
-                <Label Content="Погрешность вычислений в методе переменных параметров упругости:"/>
-                <TextBox Name="ResilienceImprecision" Text="{Binding ThickValue}"/>
-                <Label Content="Напряжение текучести:"/>
-                <TextBox Name="YieldStress" Text="{Binding ThickValue}"/>
-                <Label Content="Модуль сдвига:"/>
-                <TextBox Name="ShearModulus" Text="{Binding ThickValue}"/>
-                <Label Content="Модель коррозийного износа:"/>
-                <ComboBox Name="CorrosionModel">
-                    <ComboBoxItem>Модель Долинского</ComboBoxItem>
-                    <ComboBoxItem>Модель Гутмана</ComboBoxItem>
-                </ComboBox>
-                <Label Content="Шаг по времени :"/>
-                <TextBox Name="TimeStep" Text="{Binding ThickValue}"/>
-                <Label Content="Количество шагов по времени:"/>
-                <TextBox Name="TimeStepAmount" Text="{Binding ThickValue}"/>
-                <Label Content="Физическая линейность:"/>
-                <ComboBox Name="PhisicalNonlinearity">
-                    <ComboBoxItem>Да</ComboBoxItem>
-                    <ComboBoxItem>Нет</ComboBoxItem>
-                </ComboBox>
-                <Label Content="Геометрическая линейность:"/>
-                <ComboBox Name="GeometricalNonlinearity">
-                    <ComboBoxItem>Да</ComboBoxItem>
-                    <ComboBoxItem>Нет</ComboBoxItem>
-                </ComboBox>
-                <Label Content="Вид закрепления на границе:"/>
-                <ComboBox Name="BoundaryCondition">
-                    <ComboBoxItem>Шарнирное опирание</ComboBoxItem>
-                    <ComboBoxItem>Жёсткое защемление</ComboBoxItem>
-                </ComboBox>
-                <Label Content="Вид прикладываемой внешней нагрузки"/>
-                <ComboBox Name="ExternalLoading">
-                    <ComboBoxItem>Продольная нагрузка</ComboBoxItem>
-                    <ComboBoxItem>Поперечная нагрузка</ComboBoxItem>
-                    <ComboBoxItem>Продольная и поперечная нагрузка</ComboBoxItem>
-                </ComboBox>
-                <Label Content="Вид сжатия:"/>
-                <ComboBox Name="Compression">
-                    <ComboBoxItem>Одноостное</ComboBoxItem>
-                    <ComboBoxItem>Двухостное</ComboBoxItem>
-                </ComboBox>
-                <Label Content="Разменость продольной нагрузки:"/>
-                <TextBox Name="LoadingDimension" Text="{Binding ThickValue}"/>
-                <Label Content="Начальное значение поперечной нагрузки:"/>
-                <TextBox Name="TransverseStart" Text="{Binding ThickValue}"/>
-                <Label Content="Шаг изменения поперечной нагрузки:"/>
-                <TextBox Name="TransverseStep" Text="{Binding ThickValue}"/>
-                <Label Content="Конечное значение поперечной нагрузки:"/>
-                <TextBox Name="TransverseFinal" Text="{Binding ThickValue}"/>
-                <Label Content="Начальное значение продольной нагрузки:"/>
-                <TextBox Name="LongitudinalStart" Text="{Binding ThickValue}"/>
-                <Label Content="Шаг изменения продольной нагрузки:"/>
-                <TextBox Name="LongitudinalStep" Text="{Binding ThickValue}"/>
-                <Label Content="Конечное значение продольной нагрузки:"/>
-                <TextBox Name="LongitudinalFinal"/>
+        Height="720" Width="520" MinWidth="480"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource EntranceBackgroundBrush}"
+        UseLayoutRounding="True">
 
-                <StackPanel Grid.Row="9" 
-                            HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,5">
-                    <Button x:Name="btn" Content="Применить" 
-                        Margin="5,0,5,0" Padding="4, 2" Click="btn_Click"/>
+    <Window.DataContext>
+        <vm:EntranceViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/EntranceStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <cnvtr:StringToDoubleConverter x:Key="StringToDouble" 
+                                ErrorText="{Binding ConverterException, 
+                                            Mode=OneWayToSource}"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  Background="{StaticResource CardBackgroundBrush}" 
+                  Style="{DynamicResource VerticalScrollStyle}">
+        <StackPanel Margin="18,16,18,20">
+
+            <Border Style="{StaticResource CardBorderStyle}" Padding="16,14" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="Параметры расчетной модели пластины"
+                               Style="{StaticResource SectionHeaderStyle}"
+                               FontSize="16" Margin="0,0,0,4"/>
+                    <TextBlock Text="Введите исходные данные в безразмерном виде:"
+                               Style="{StaticResource SectionSubheaderStyle}"
+                               Margin="0"/>
                 </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Геометрия и сетка разбиения" Style="{StaticResource SectionHeaderStyle}"/>
+
+                    <Label Content="Начальная толщина:"/>
+                    <TextBox x:Name="Thickness" Style="{StaticResource TextBoxDefault}" 
+                        Text="{Binding H0, Mode=TwoWay, 
+                        FallbackValue='', Converter={StaticResource StringToDouble}, ConverterParameter=H0}"/>
+
+                    <Label Content="Разбиение пластинки по плану:"/>
+                    <TextBox x:Name="EquipartitionXY" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding N, Mode=TwoWay, FallbackValue=''}"/>
+
+                    <Label Content="Разбиение пластинки по толщине:"/>
+                    <TextBox x:Name="EquipartitionZ" Text="{Binding NT, Mode=TwoWay, FallbackValue='', 
+                        Converter={StaticResource StringToDouble}, ConverterParameter=NT}">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxDefault}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=PhisYes, Path=IsSelected}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                        <Setter Property="Text" Value="{Binding NT, Mode=TwoWay, 
+                                            FallbackValue='', UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+
+                    <Label Content="Отношение длины к ширине пластины:"/>
+                    <TextBox x:Name="AspectRatio" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding Lambda, Mode=TwoWay, FallbackValue='', 
+                        Converter={StaticResource StringToDouble}, ConverterParameter=Lambda}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Упругие и прочностные характеристики" Style="{StaticResource SectionHeaderStyle}"/>
+
+                    <Label Content="Коэффициент Пуассона:"/>
+                    <TextBox x:Name="Poisson" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding HUO, Mode=TwoWay, FallbackValue='', 
+                        Converter={StaticResource StringToDouble}, ConverterParameter=HUO}"/>
+
+                    <Label Content="Модуль упругости:"/>
+                    <TextBox x:Name="ResilienceModulus" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding EO, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=EO}"/>
+
+                    <Label Content="Объемный модуль упругости:"/>
+                    <TextBox x:Name="BulkModulus" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding OMY, Mode=TwoWay, FallbackValue='', 
+                        Converter={StaticResource StringToDouble}, ConverterParameter=OMY}"/>
+
+                    <Label Content="Модуль сдвига:"/>
+                    <TextBox x:Name="ShearModulus" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding G1, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=G1}"/>
+
+                    <Label Content="Деформация текучести:"/>
+                    <TextBox x:Name="YieldStrength" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding ES, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=ES}"/>
+
+                    <Label Content="Напряжение текучести:"/>
+                    <TextBox x:Name="YieldStress" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding SS, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=SS}"/>
+
+                    <Label Content="Предел прочности:"/>
+                    <TextBox x:Name="TensileStrength" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding TensileStrength, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=TensileStrength}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Параметры численного метода и коррозии" Style="{StaticResource SectionHeaderStyle}"/>
+
+                    <Label Content="Погрешность вычислений в методе переменных параметров упругости:"/>
+                    <TextBox x:Name="ResilienceImprecision" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding EPSP, Mode=TwoWay, FallbackValue='', 
+                        ValidatesOnExceptions=True, Converter={StaticResource StringToDouble}, ConverterParameter=EPSP}"/>
+
+                    <Label Content="Погрешность вычислений в методе вариационных итераций:"/>
+                    <TextBox x:Name="VariationImprecision" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding EPSV, Mode=TwoWay, FallbackValue='', 
+                        Converter={StaticResource StringToDouble}, ConverterParameter=EPSV}"/>
+
+                    <Label Content="Модель коррозийного износа:"/>
+                    <ComboBox x:Name="CorrosionModel" SelectedIndex="{Binding SelectedCorrosionModelIndex, Mode=TwoWay}">
+                        <ComboBoxItem>Модель Долинского</ComboBoxItem>
+                        <ComboBoxItem>Модель Гутмана</ComboBoxItem>
+                    </ComboBox>
+
+                    <Label Content="Лимит по времени:"/>
+                    <TextBox x:Name="TimeLimit" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding TimeLimit, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=TimeLimit}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Граничные условия и линейность" Style="{StaticResource SectionHeaderStyle}"/>
+
+                    <Label Content="Физическая линейность:"/>
+                    <ComboBox x:Name="PhisicalNonlinearity" SelectedIndex="{Binding SelectedPhysicalLinearityIndex, Mode=TwoWay}">
+                        <ComboBoxItem x:Name="PhisYes">Да</ComboBoxItem>
+                        <ComboBoxItem>Нет</ComboBoxItem>
+                    </ComboBox>
+
+                    <Label Content="Геометрическая линейность:"/>
+                    <ComboBox x:Name="GeometricalNonlinearity" SelectedIndex="{Binding SelectedGeometricalLinearityIndex, Mode=TwoWay}">
+                        <ComboBoxItem>Да</ComboBoxItem>
+                        <ComboBoxItem>Нет</ComboBoxItem>
+                    </ComboBox>
+
+                    <Label Content="Вид закрепления на границе:"/>
+                    <ComboBox x:Name="BoundaryCondition" SelectedIndex="{Binding SelectedBoundaryConditionIndex, Mode=TwoWay}">
+                        <ComboBoxItem>Шарнирное опирание</ComboBoxItem>
+                        <ComboBoxItem>Жёсткое защемление</ComboBoxItem>
+                    </ComboBox>
+
+                    <Label Content="Вид прикладываемой внешней нагрузки:"/>
+                    <ComboBox x:Name="ExternalLoading" SelectedIndex="{Binding SelectedExternalLoadingIndex, Mode=TwoWay}">
+                        <ComboBoxItem x:Name="Transverse">Продольная нагрузка</ComboBoxItem>
+                        <ComboBoxItem x:Name="Longitudinal">Поперечная нагрузка</ComboBoxItem>
+                        <ComboBoxItem>Продольная и поперечная нагрузка</ComboBoxItem>
+                    </ComboBox>
+
+                    <Label Content="Вид сжатия:"/>
+                    <ComboBox x:Name="Compression" SelectedIndex="{Binding SelectedCompressionIndex, Mode=TwoWay}">
+                        <ComboBoxItem>Одноостное</ComboBoxItem>
+                        <ComboBoxItem>Двухостное</ComboBoxItem>
+                    </ComboBox>
+
+                    <Label Content="Размерность продольной нагрузки:"/>
+                    <TextBox x:Name="LoadingDimension" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding ICON, Mode=TwoWay, FallbackValue='', NotifyOnValidationError=True}">
+                    </TextBox>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Параметры внешней нагрузки" Style="{StaticResource SectionHeaderStyle}"/>
+
+                    <TextBlock Text="Поперечная нагрузка" Style="{StaticResource SectionSubheaderStyle}" Margin="0,4,0,2"/>
+
+                    <Label Content="Начальное значение поперечной нагрузки:"/>
+                    <TextBox x:Name="TransverseStart" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding QP0, Mode=TwoWay, FallbackValue='', 
+                        Converter={StaticResource StringToDouble}, ConverterParameter=QP0}"/>
+
+                    <Label Content="Шаг изменения поперечной нагрузки:"/>
+                    <TextBox x:Name="TransverseStep" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding DQP, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=DQP}">
+                        <i:Interaction.Triggers>
+                            <i:DataTrigger Binding="{Binding ElementName=Transverse, 
+                                                           Path=IsSelected}" Value="True">
+                                <i:InvokeCommandAction Command="{Binding RemoveCommand}"
+                                                       CommandParameter="DQP"/>
+                                <i:ChangePropertyAction TargetName="TransverseStep"
+                                                        PropertyName="Text"
+                                                        Value=""/>
+                                <i:ChangePropertyAction TargetName="TransverseStep" 
+                                                        PropertyName="IsEnabled"
+                                                        Value="False"/>
+                            </i:DataTrigger>
+                            <i:DataTrigger Binding="{Binding ElementName=Transverse, 
+                                                           Path=IsSelected}" Value="False">
+                                <i:ChangePropertyAction TargetName="TransverseStep" 
+                                                        PropertyName="IsEnabled"
+                                                        Value="True"/>
+                                <i:InvokeCommandAction Command="{Binding UpdateCommand}"
+                                                       CommandParameter="DQP"/>
+                            </i:DataTrigger>
+                        </i:Interaction.Triggers>
+
+                    </TextBox>
+
+                    <Label Content="Конечное значение поперечной нагрузки:"/>
+                    <TextBox x:Name="TransverseFinal" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding QPE, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=QPE}">
+                        <i:Interaction.Triggers>
+                            <i:DataTrigger Binding="{Binding ElementName=Transverse, 
+                                   Path=IsSelected}" Value="True">
+                                <i:InvokeCommandAction Command="{Binding RemoveCommand}"
+                               CommandParameter="QPE"/>
+                                <i:ChangePropertyAction TargetName="TransverseFinal"
+                                PropertyName="Text"
+                                Value=""/>
+                                <i:ChangePropertyAction TargetName="TransverseFinal"
+                                PropertyName="IsEnabled"
+                                Value="False"/>
+                            </i:DataTrigger>
+                            <i:DataTrigger Binding="{Binding ElementName=Transverse, 
+                                   Path=IsSelected}" Value="False">
+                                <i:ChangePropertyAction TargetName="TransverseFinal" 
+                                PropertyName="IsEnabled"
+                                Value="True"/>
+                                <i:InvokeCommandAction Command="{Binding UpdateCommand}"
+                               CommandParameter="QPE"/>
+                            </i:DataTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+
+                    <Separator Margin="0,10,0,6" Background="{StaticResource CardBorderBrush}"/>
+
+                    <TextBlock Text="Продольная нагрузка" Style="{StaticResource SectionSubheaderStyle}" Margin="0,4,0,2"/>
+
+                    <Label Content="Начальное значение продольной нагрузки:"/>
+                    <TextBox x:Name="LongitudinalStart" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding QL0, Mode=TwoWay, FallbackValue='', 
+                        Converter={StaticResource StringToDouble}, ConverterParameter=QL0}"/>
+
+                    <Label Content="Шаг изменения продольной нагрузки:"/>
+                    <TextBox x:Name="LongitudinalStep" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding DQL, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=DQL}">
+                        <i:Interaction.Triggers>
+                            <i:DataTrigger Binding="{Binding ElementName=Longitudinal, 
+                                   Path=IsSelected}" Value="True">
+                                <i:InvokeCommandAction Command="{Binding RemoveCommand}"
+                               CommandParameter="DQL"/>
+                                <i:ChangePropertyAction TargetName="LongitudinalStep"
+                                PropertyName="Text"
+                                Value=""/>
+                                <i:ChangePropertyAction TargetName="LongitudinalStep" 
+                                PropertyName="IsEnabled"
+                                Value="False"/>
+                            </i:DataTrigger>
+                            <i:DataTrigger Binding="{Binding ElementName=Longitudinal, 
+                                   Path=IsSelected}" Value="False">
+                                <i:ChangePropertyAction TargetName="LongitudinalStep" 
+                                PropertyName="IsEnabled"
+                                Value="True"/>
+                                <i:InvokeCommandAction Command="{Binding UpdateCommand}"
+                               CommandParameter="DQL"/>
+                            </i:DataTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+
+                    <Label Content="Конечное значение продольной нагрузки:"/>
+                    <TextBox x:Name="LongitudinalFinal" Style="{StaticResource TextBoxDefault}" 
+                             Text="{Binding QLE, Mode=TwoWay, FallbackValue='',
+                        Converter={StaticResource StringToDouble}, ConverterParameter=QLE}">
+                        <i:Interaction.Triggers>
+                            <i:DataTrigger Binding="{Binding ElementName=Longitudinal, 
+                                                     Path=IsSelected}" Value="True">
+                                <i:InvokeCommandAction Command="{Binding RemoveCommand}"
+                                                       CommandParameter="QLE"/>
+                                <i:ChangePropertyAction TargetName="LongitudinalFinal"
+                                                        PropertyName="Text"
+                                                        Value=""/>
+                                <i:ChangePropertyAction TargetName="LongitudinalFinal" 
+                                                        PropertyName="IsEnabled"
+                                                        Value="False"/>                     
+                            </i:DataTrigger>
+                            <i:DataTrigger Binding="{Binding ElementName=Longitudinal, 
+                                           Path=IsSelected}" Value="False">
+                                <i:ChangePropertyAction TargetName="LongitudinalFinal" 
+                                                        PropertyName="IsEnabled"
+                                                        Value="True"/>      
+                                <i:InvokeCommandAction Command="{Binding UpdateCommand}"
+                                                       CommandParameter="QLE"/>
+                            </i:DataTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </StackPanel>
+            </Border>
+
+            <StackPanel HorizontalAlignment="Center" Margin="0,8,0,10">
+                <Button x:Name="btn" Content="Применить"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Command="{Binding ApplyCommand}"/>
             </StackPanel>
-        </Grid>
+
+        </StackPanel>
     </ScrollViewer>
 </Window>

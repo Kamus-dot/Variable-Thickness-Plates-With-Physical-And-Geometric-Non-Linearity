@@ -3,7 +3,7 @@ using System.Data;
 using System.Windows;
 using CorrosionModel;
 
-namespace PlateModel
+namespace WPFPlateModel
 {
     /// <summary>
     /// Interaction logic for App.xaml

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,8 +58,6 @@ namespace CorrosionModel
         /// Шаг сетки в квадрате
         /// </summary>
         public double V2 { get; }
-        // Число приближений в методе вариационных итераций (<= 4)
-        public virtual int NM { get; set; }
         /// <summary>
         /// Число шагов конечно-разностной сетки по одной из координат
         /// </summary>
@@ -66,7 +65,9 @@ namespace CorrosionModel
         {
             get => _n; set
             {
-                if (value < 0 || value % 2 != 0) throw new ArgumentOutOfRangeException(nameof(value), "Ошибка в объявлении (Разбиение по плану должно быть чётным)");
+                if (value < 0 || value % 2 != 0) throw new ArgumentException($"Ошибка в объявлении {nameof(N)}: (Разбиение по плану должно быть чётным)");
+                try { ReallocateGrid(); }
+                catch (Exception e) { throw new Exception($"Не удалось изменить размерность матриц: {e.Message}"); }
                 _n = value;
             }
         }
@@ -74,7 +75,29 @@ namespace CorrosionModel
         /// <summary>
         /// Число слоёв по толщине
         /// </summary>
-        public virtual int NT { get; set; }
+        public virtual int NT
+        {
+            get => _nt; set
+            {
+                try
+                {
+                    if (_jf)
+                    {
+                        _nt = 2;
+                        return;
+                    }
+                }
+                catch (Exception) { throw new Exception($"Не удалось присвоить значение элементу {nameof(NT)} из-за необъявленного флага JF"); }
+                if (value > 0)
+                {
+                    try { ReallocateGrid(); }
+                    catch (Exception e) { throw new Exception($"Не удалось изменить размерность матриц: {e.Message}"); }
+                    _nt = value;
+                }
+                else throw new ArgumentException($"Ошибка в объявлении {nameof(value)}");
+            }
+        }
+        private int _nt;
         private double EMIN { get; set; }
         /// <summary>
         /// Погрешность вычислений в методе переменных параметров упругости
@@ -114,7 +137,16 @@ namespace CorrosionModel
         /// <summary>
         /// Размерность приложенной нагрузки на пластину
         /// </summary>
-        public virtual int ICON { get; set; }
+        public virtual int ICON
+        {
+            get => _icon; set
+            {
+                if (value > 0 && value % 2 == 0 && value <= N)
+                    _icon = value;
+                else throw new ArgumentException($"Ошибка в объявлении {nameof(ICON)}");
+            }
+        }
+        private int _icon;
         /// <summary>
         /// Коэффиценты граничных условий базисных функций
         /// </summary>
@@ -133,9 +165,10 @@ namespace CorrosionModel
         /// </summary>
         private double[,] QTF { get; set; }
         /// <summary>
-        /// Начальная толщина пластинки
+        /// Начальная толщина пластинки (значение толщины в каждой точке)
         /// </summary>
-        public double H0 { get; set; }
+        public double H0 { get => _h0; set => NormDoubleValidation(nameof(H0), value, ref _h0); }
+        private double _h0;
         /// <summary>
         /// Толщина пластинки
         /// </summary>
@@ -151,7 +184,16 @@ namespace CorrosionModel
         /// <summary>
         /// JF = true - физически линейная задача, JF = false - нелинейная)
         /// </summary>
-        public virtual bool JF { get; set; }
+        public virtual bool JF
+        {
+            get => _jf;
+            set
+            {
+                _jf = value;
+                if (value) NT = 2;
+            }
+        }
+        private bool _jf;
         /// <summary>
         /// IL = true - геометрически линейная задача, IL = false - нелинейная)
         /// </summary>
@@ -231,7 +273,7 @@ namespace CorrosionModel
         /// <summary>
         /// Безразмерный шаг по времени 
         /// </summary>
-        public virtual double Delta_t { get => _delta_t; set => NormDoubleValidation(nameof(Delta_t), value, ref _delta_t); }
+        public double Delta_t { get => _delta_t; set => NormDoubleValidation(nameof(Delta_t), value, ref _delta_t); }
         private double _delta_t;
         /// <summary>
         /// Количество шагов по времени
@@ -242,7 +284,7 @@ namespace CorrosionModel
         /// </summary>
         private double[,] Corrosion { get; set; }
         /// <summary>
-        /// Матрица упругости 
+        /// Модель коррозии 
         /// </summary>
         public enum CorrosionModels { Dolinskyi, Gutman };
         public CorrosionModels CorrosionModel { get; set; }

@@ -9,6 +9,11 @@ namespace CorrosionModel
 {
     public partial class MathCorrosionModel
     {
+        /// <summary>
+        /// Основная процедура коррозийного процесса
+        /// </summary>
+        /// <param name="SIG">Диаграмма деформирования</param>
+        /// <exception cref="Exception"></exception>
         public void Cycle(Func<double, double> SIG)
         {
             do
@@ -73,8 +78,6 @@ namespace CorrosionModel
             }
             Console.WriteLine($"Тип коррозии: {CorrosionModel}");
             Console.WriteLine($"Физическая линейность: {JF}, Геометрическая линейность: {IL}");
-            Console.WriteLine("Граничное условие для прогиба: Шарнирное опирание");
-            Console.WriteLine("Граничное условие для усилий: Жёсткое опирание");
             Console.WriteLine($"{MaxEI} is Max Deformation Intensivity");
             Console.WriteLine($"ПОПЕР.НАГР.={Q} ПРОД.НАГР.={QL} ПРОГИБ В ЦЕНТРЕ={WXY[N, N]}");
 

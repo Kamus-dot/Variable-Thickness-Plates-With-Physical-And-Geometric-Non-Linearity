@@ -1,15 +1,20 @@
-﻿<Application x:Class="PlateModel.App"
+<Application x:Class="WPFPlateModel.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:PlateModel"
+             xmlns:local="clr-namespace:WPFPlateModel"
+             xmlns:ent="clr-namespace:WPFPlateModel.ViewModels"
+             xmlns:cnvtr="clr-namespace:WPFPlateModel.Converters"
              StartupUri="Views/EntranceWindow.xaml"
              Startup="Application_Startup" Exit="Application_Exit">
     <Application.Resources>
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Colors.xaml"/>
                 <ResourceDictionary Source="/Resources/Buttons.xaml"/>
+                <ResourceDictionary Source="/Resources/MainStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

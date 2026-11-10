@@ -19,8 +19,8 @@ namespace CorrosionModel
 
         public void SIMQ(double[,] A, double[] Q, ref double[,] UNK)
         {
-            double[,] Out = new double[NM, N + 4];
-            int NMN = NM * N;
+            double[,] Out = new double[NT, N + 4];
+            int NMN = NT * N;
             int NMN_1 = NMN - 1;
             int N_1 = N - 1;
             // Приводим ленточный массив к треугольному виду:
@@ -28,7 +28,7 @@ namespace CorrosionModel
             {
                 int f = (int)i / N;
                 if (f > 0 && i % N == N_1) continue;
-                for (int t = 0; t < NM - f; t++)
+                for (int t = 0; t < NT - f; t++)
                 {
                     int itn = i + t * N;
                     int itn2 = itn + 2;
@@ -67,7 +67,7 @@ namespace CorrosionModel
             //}
             // Разрешаем полученную матрицу:
             int N1 = N + 1;
-            int NM_1 = NM - 1;
+            int NM_1 = NT - 1;
 
             Out[NM_1, N1] = Q[NMN_1] / A[NMN_1, NMN_1];
             for (int i = NM_1; i >= 0; i--)

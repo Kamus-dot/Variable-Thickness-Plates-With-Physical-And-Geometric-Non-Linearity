@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.36603.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsolePlateModel", "1-st Model\ConsolePlateModel.csproj", "{353339FE-36E3-49AC-85DF-B1A3D367447B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlateModel", "PlateModel\PlateModel.csproj", "{E0B853AB-EDFE-4BC0-9568-AB17419AA371}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFPlateModel", "PlateModel\WPFPlateModel.csproj", "{E0B853AB-EDFE-4BC0-9568-AB17419AA371}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorrosionModels", "CorrosionModels\CorrosionModels.csproj", "{BF445B46-4BCE-4AEA-8FF2-41715B5CB24D}"
 EndProject

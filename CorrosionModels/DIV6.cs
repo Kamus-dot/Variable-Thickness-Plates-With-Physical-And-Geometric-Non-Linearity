@@ -23,7 +23,7 @@ namespace CorrosionModel
                     double SP = 0;
                     if (IWF == 1)
                     {
-                        for (int k = 0; k < NM; k++)
+                        for (int k = 0; k < NT; k++)
                         {
                             SP += X[k, i + 1] * Y[k, j + 1];
                         }
@@ -31,7 +31,7 @@ namespace CorrosionModel
                     }
                     else if (IWF == 2)
                     {
-                        for (int k = 0; k < NM; k++)
+                        for (int k = 0; k < NT; k++)
                         {
                             SP += XF[k, i + 1] * YF[k, j + 1];
                         }

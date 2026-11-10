@@ -9,7 +9,12 @@ namespace CorrosionModel
 {
     public partial class MathCorrosionModel
     {
-        public void StartLoad()
+        /// <summary>
+        /// Начальная нагрузка пластины
+        /// <para>(Рассматривается случай, когда нагрузка не меняет своего направления
+        /// во время всего итерационного процесса)</para>
+        /// </summary>
+        public virtual void StartLoad()
         {
             INTEGER();
             QL = QL0;

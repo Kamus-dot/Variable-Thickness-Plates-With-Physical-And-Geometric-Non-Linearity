@@ -27,7 +27,7 @@ namespace CorrosionModel
 
                 line = reader.ReadLine();
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                NM = int.Parse(parts[0]);
+                NT = int.Parse(parts[0]);
                 N = int.Parse(parts[1]);
                 NT = int.Parse(parts[2]);
                 EPSP = double.Parse(parts[3], customNumberFormat);
@@ -77,6 +77,32 @@ namespace CorrosionModel
             CorrosionModel = CorrosionModels.Dolinskyi;
             Delta_t = 0.1;
             TimeLimit = 70;
+        }
+        /// <summary>
+        /// Вызывается в случае изменения размерности сетки (по плану, либо по толщине)
+        /// </summary>
+        public virtual void ReallocateGrid()
+        {
+            int N4 = N + 4;
+            int N1 = N + 1;
+
+            X = new double[NT, N4];
+            Y = new double[NT, N4];
+            XF = new double[NT, N4];
+            YF = new double[NT, N4];
+
+            H = new double[N1, N1];
+            WXY = new double[N1, N1];
+            FXY = new double[N1, N1];
+            SVO = new double[N1, N1];
+            SEN = new double[N1, N1];
+
+            TENS_AVG = new double[N1, N1];
+
+            DEF_INT = new double[N1, N1, NT + 1];
+            EX = new double[N1, N1, NT + 1];
+            EY = new double[N1, N1, NT + 1];
+            EXY = new double[N1, N1, NT + 1];
         }
     }
 }

@@ -1,22 +1,25 @@
-﻿<Window x:Class="PlateModel.MainWindow"
+﻿<Window x:Class="WPFPlateModel.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
-        xmlns:local="clr-namespace:PlateModel"
+        xmlns:local="clr-namespace:WPFPlateModel.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" UseLayoutRounding="True">
     <Window.DataContext>
         <local:MainViewModel/> 
     </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary Source="/Resources/MainStyles.xaml"/>
+    </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Save" 
                     Executed="CommandBinding_Executed" CanExecute="CommandBinding_CanExecute"/>
     </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20px"/>
+            <RowDefinition Height="30px"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Menu Height="25" Grid.Row="0" VerticalAlignment="Top">
@@ -27,48 +30,32 @@
         </Menu>
         <Grid Grid.Row="1">
             <hx:Viewport3DX x:Name="firstView"
-                Title="{Binding Title}"
-                BackgroundColor="LightGoldenrodYellow"
+                BackgroundColor="{DynamicResource BorderLightColor}"
                 Camera="{Binding Camera}"
-                CoordinateSystemLabelForeground="#434343"
                 EffectsManager="{Binding EffectsManager}"
-                EnableDesignModeRendering="True"
-                FXAALevel="Low"
-                EnableSwapChainRendering="False"
                 ModelUpDirection="{Binding UpDirection}"
-                ShowCoordinateSystem="True"
-                TextBrush="Black"
-                UseDefaultGestures="False">
+                ShowViewCube="False">
                 <hx:Viewport3DX.InputBindings>
                     <MouseBinding Command="hx:ViewportCommands.Rotate"
                               Gesture="RightClick" />
                     <MouseBinding Command="hx:ViewportCommands.Zoom"
-                              Gesture="MiddleClick" />
+                              Gesture="LeftClick" />
                     <MouseBinding Command="hx:ViewportCommands.Pan"
-                                   Gesture="LeftClick"/>
+                                   Gesture="MiddleClick"/>
                 </hx:Viewport3DX.InputBindings>
                 <hx:LineMaterialGeometryModel3D Geometry="{Binding AxisModel}"
                                         Material="{Binding AxisModelMaterial}"/>
             </hx:Viewport3DX>
 
-            <DockPanel x:Name="parameterTab" Background="Gray" 
+            <Border x:Name="parameterTab" Background="Gray" 
                        Visibility="Visible" Opacity="0.4"
                        Width="200" HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5">
-                <DockPanel.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="0.77"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </DockPanel.RenderTransform>
-                <Label DockPanel.Dock="Right"
-                       Content="⁞"
+                <Label Content="⁞"
                        FontSize="18"    
                        IsHitTestVisible="False"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center" />
-            </DockPanel>
+            </Border>
         </Grid>
     </Grid>
 </Window>

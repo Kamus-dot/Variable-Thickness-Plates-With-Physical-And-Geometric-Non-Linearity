@@ -9,7 +9,7 @@ namespace CorrosionModel
     public partial class MathCorrosionModel
     {
         /// <summary>
-        /// Коррекция Корнишина
+        /// Коррекция Корнишина (для 2-х мерной матрицы)
         /// </summary>
         /// <param name="X">Матрица значений предыдущей итерации</param>
         /// <param name="Y">Матрица значений настоящей итерации</param>

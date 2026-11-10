@@ -22,7 +22,7 @@ using Transform3D = System.Windows.Media.Media3D.Transform3D;
 using Vector3D = System.Windows.Media.Media3D.Vector3D;
 
 
-namespace PlateModel
+namespace WPFPlateModel.ViewModels
 {
     partial class MainViewModel : ObservableObject
     {
@@ -56,12 +56,11 @@ namespace PlateModel
             effectsManager = new DefaultEffectsManager();
 
             // Камера
-            camera = new HelixToolkit.Wpf.SharpDX.OrthographicCamera
+            Camera = new HelixToolkit.Wpf.SharpDX.PerspectiveCamera()
             {
-                Position = new Point3D(3, 3, 5),
-                LookDirection = new Vector3D(-3, -3, -5),
-                UpDirection = new Vector3D(0, 0, 1),
-                FarPlaneDistance = 50000
+                Position = new System.Windows.Media.Media3D.Point3D(0, 0, 10),
+                LookDirection = new System.Windows.Media.Media3D.Vector3D(0, 0, -10),
+                UpDirection = new System.Windows.Media.Media3D.Vector3D(0, 1, 0)
             };
 
             // Axis 
@@ -88,20 +87,30 @@ namespace PlateModel
             model1Transform = new Media3D.TranslateTransform3D(0, 0, 0);
         }
 
-        private Stream? CreatePNGSample()
-        {
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+        //private void CreateViewModels()
+        //{
+        //    var vm = new SelectionViewModel(nameof(Sphere));
+        //    for (int i = 0; i < 10; ++i)
+        //    {
+        //        vm.Items.Add(new Sphere()
+        //        {
+        //            Transform = new TranslateTransform3D(0, i, 0),
+        //            Material = materials[i]
+        //        });
+        //    }
+        //    ViewModels.Add(vm);
 
-            //Read the texture description           
-            var texDescriptionStream = assembly.GetManifestResourceStream("SimpleDemo.Sample.png");
-
-            if (texDescriptionStream is not null)
-            {
-                texDescriptionStream.Position = 0;
-            }
-
-            return texDescriptionStream;
-        }
+        //    vm = new SelectionViewModel(nameof(Cube));
+        //    for (int i = 0; i < 10; ++i)
+        //    {
+        //        vm.Items.Add(new Cube()
+        //        {
+        //            Transform = new TranslateTransform3D(i, i, 0),
+        //            Material = materials[i]
+        //        });
+        //    }
+        //    ViewModels.Add(vm);
+        //}
     }
 }
 

@@ -36,8 +36,8 @@ namespace CorrosionModel
             int N21 = 2 * N + 1;
             int N22 = 2 * N1;
             int N3 = N + 3;
-            double[,] X = new double[NM, N22];
-            double[,] E = new double[NM, N22];
+            double[,] X = new double[NT, N22];
+            double[,] E = new double[NT, N22];
             double[] XE = new double[N21];
 
             // Новый базис
@@ -46,7 +46,7 @@ namespace CorrosionModel
             double[] SL = new double[N21];
             double[] S = new double[N21];
             int M2 = 2 * N; 
-            for (int I = 0; I < NM; I++)
+            for (int I = 0; I < NT; I++)
             {
                 for (int J = 0; J < N1; J++)
                 {
@@ -59,9 +59,9 @@ namespace CorrosionModel
             {
                 E[0, I] = X[0, I];
             }
-            if (NM != 1)
+            if (NT != 1)
             {
-                for (int K = 1; K < NM; K++)
+                for (int K = 1; K < NT; K++)
                 {
                     for (int L = 0; L < N21; L++)
                     {
@@ -96,7 +96,7 @@ namespace CorrosionModel
 
                 // Перезаписывается для учёта граничного условия в 1-ой точке отчёта
 
-                for (int I = 0; I < NM; I++)
+                for (int I = 0; I < NT; I++)
                 {
                     for (int J = 0; J < N3; J++)
                     {
@@ -106,7 +106,7 @@ namespace CorrosionModel
             }
             if (NORM)
             {
-                for (int I = 0; I < NM; I++)
+                for (int I = 0; I < NT; I++)
                 {
                     double P = 0;
                     for (int J = 0; J < N21; J++)

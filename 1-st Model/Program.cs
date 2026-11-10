@@ -21,12 +21,10 @@ public class Program
         }
         model.H0 = 0.749;
 
-        if (model.JF) model.NT = 2;
-
         double SL = 0.5 / model.N;
         double SP = Math.PI * SL;
 
-        for (int K = 0; K < model.NM; K++)
+        for (int K = 0; K < model.NT; K++)
         {
             int KL = 2 * K + 1;
             for (int I = 0; I < M1; I++)
