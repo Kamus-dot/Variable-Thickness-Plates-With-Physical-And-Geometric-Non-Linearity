@@ -5,30 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
         xmlns:local="clr-namespace:WPFPlateModel.ViewModels"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="MainWindow" UseLayoutRounding="True">
-    <Window.DataContext>
-        <local:MainViewModel/> 
-    </Window.DataContext>
+    
     <Window.Resources>
         <ResourceDictionary Source="/Resources/MainStyles.xaml"/>
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="ApplicationCommands.Save" 
-                    Executed="CommandBinding_Executed" CanExecute="CommandBinding_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.Save"/>
     </Window.CommandBindings>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="9*"/>
+            <ColumnDefinition Width="11*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30px"/>
+            <RowDefinition Height="18"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Menu Height="25" Grid.Row="0" VerticalAlignment="Top">
-            <MenuItem Header="File" Click="MenuItem_Click">
+        <Menu VerticalAlignment="Center" Grid.ColumnSpan="2" 
+               FontSize="12">
+            <MenuItem Header="File">
                 <MenuItem Command ="ApplicationCommands.Save"/>
 
             </MenuItem>
         </Menu>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <hx:Viewport3DX x:Name="firstView"
                 BackgroundColor="{DynamicResource BorderLightColor}"
                 Camera="{Binding Camera}"
@@ -37,25 +40,22 @@
                 ShowViewCube="False">
                 <hx:Viewport3DX.InputBindings>
                     <MouseBinding Command="hx:ViewportCommands.Rotate"
-                              Gesture="RightClick" />
-                    <MouseBinding Command="hx:ViewportCommands.Zoom"
                               Gesture="LeftClick" />
+                    <MouseBinding Command="hx:ViewportCommands.Zoom"
+                              Gesture="RightClick" />
                     <MouseBinding Command="hx:ViewportCommands.Pan"
                                    Gesture="MiddleClick"/>
                 </hx:Viewport3DX.InputBindings>
+                <hx:AmbientLight3D Color="#404040"/>
+                <hx:DirectionalLight3D Direction="{Binding Camera.LookDirection}" Color="White"/>
                 <hx:LineMaterialGeometryModel3D Geometry="{Binding AxisModel}"
                                         Material="{Binding AxisModelMaterial}"/>
+                <hx:MeshGeometryModel3D Geometry="{Binding Model}"  
+                                        Material="{Binding ModelMaterial}"
+                                        RenderWireframe="False"
+                                        CullMode="Back"
+                                        Transform="{Binding ModelTransform}"/>
             </hx:Viewport3DX>
-
-            <Border x:Name="parameterTab" Background="Gray" 
-                       Visibility="Visible" Opacity="0.4"
-                       Width="200" HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5">
-                <Label Content="⁞"
-                       FontSize="18"    
-                       IsHitTestVisible="False"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" />
-            </Border>
         </Grid>
     </Grid>
 </Window>

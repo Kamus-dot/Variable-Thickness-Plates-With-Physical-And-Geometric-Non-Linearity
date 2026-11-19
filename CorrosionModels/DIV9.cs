@@ -32,7 +32,7 @@ namespace CorrosionModel
             Console.WriteLine($"ПРОГИБ ПО ПЛАНУ = {PRO}");
 
             SURFW();
-            double VOL = Volume(H, N);
+            double VOL = Volume(H);
 
             Console.WriteLine($"ОБЬЕМ ПЛАСТИНКИ = {VOL}");
 

@@ -33,7 +33,7 @@ namespace CorrosionModel
             int N4 = N + 4;
             int N_2 = N - 2;
             int N_1 = N - 1;
-            int IK = N * NT;
+            int IK = N * NM;
 
             double[] S1 = new double[N1];
             double[] S2 = new double[N1];
@@ -102,7 +102,7 @@ namespace CorrosionModel
             double V4 = Pow(V2, 2);
 
             // Экстраполяция и задание начальных значений функций прогиба
-            for (int I = 0; I < NT; I++)
+            for (int I = 0; I < NM; I++)
             {
                 KN[I, 0] = G1 * KN[I, 2];
                 KN[I, N2] = KN[I, N1];
@@ -115,7 +115,7 @@ namespace CorrosionModel
                 Rt_unk[I, N3] = Rt_unk[I, N];
             }
 
-            for (int II = 0; II < NT; II++)
+            for (int II = 0; II < NM; II++)
             {
                 for (int I = 0; I < N4; I++)
                 {
@@ -125,7 +125,7 @@ namespace CorrosionModel
                 int IIN = II * N;
 
 
-                for (int KK = 0; KK < NT; KK++)
+                for (int KK = 0; KK < NM; KK++)
                 {
                     int KKN = KK * N;
 
@@ -208,11 +208,11 @@ namespace CorrosionModel
                                 // Коэффициенты для уравнения прогибов
                                 C4 = Lambda4 * AZ[M3, L3] * XK3 * XI3;
                                 C3 = Lambda4 * 2 * D1AZY * XK3 * XI3;
-                                C2 = Lambda2 * ((2 * AZ_nu[M3, L3] + BZ[M3, L3]) * D2XK * XI3 + (2 * D1AZ_nuX +
-                                    D1BZX) * D1XK * XI3 + (Lambda2 * D2AZY + D2AZ_nuX + V2 * QL1 * QL) * XI3 * XK3);
-                                C1 = Lambda2 * ((2 * D1AZ_nuY + D1BZY) * D2XK * XI3 + D2BZXY * D1XK * XI3);
-                                C = AZ[I, J] * D4XK * XI3 + 2 * D1AZX * D3XK + (D2AZX + Lambda2 * D2AZ_nuY +
-                                    V2 * QL2 * QL) * D2XK * XI3;
+                                C2 = Lambda2 * ((2 * AZ_nu[M3, L3] + BZ[M3, L3]) * D2XK + (2 * D1AZ_nuX +
+                                    D1BZX) * D1XK + (Lambda2 * D2AZY + D2AZ_nuX + V2 * QL1 * QL) * XK3) * XI3;
+                                C1 = Lambda2 * ((2 * D1AZ_nuY + D1BZY) * D2XK + D2BZXY * D1XK) * XI3;
+                                C = (AZ[M3, M3] * D4XK + 2 * D1AZX * D3XK + (D2AZX + Lambda2 * D2AZ_nuY +
+                                    V2 * QL2 * QL) * D2XK) * XI3;
 
                                 if (!IL)
                                 {
@@ -235,7 +235,7 @@ namespace CorrosionModel
                                     C2 -= Lambda2 * XK3 * D2XF * YF3 * XI3;
                                 }
 
-                                if (KK == NT - 1)
+                                if (KK == NM - 1)
                                 {
                                     double D2PHIX = (Corrosion[M4, L3] - 2 * Corrosion[M3, L3] + Corrosion[M2, L3]);
                                     double D3PHIX = (Corrosion[M5, L3] - 2 * Corrosion[M4, L3] + 2 * Corrosion[M2, L3]
@@ -262,7 +262,7 @@ namespace CorrosionModel
                                         (2 * AZ_nu[M3, L3] + BZ[M3, L3]) * D4PHIXXYY + (2 * D1AZ_nuX + D1BZX) *
                                         D3PHIXYY + (Lambda2 * D2AZ_nuY + D2AZ_nuX) * D2PHIY +
                                         Lambda2 * 2 * D1AZY * D3PHIY + Lambda2 * AZ[M3, L3] * D4PHIY)) * XI3 / 2
-                                        + V4 * QTW[M2, L2] * XI3;
+                                        + 2 * V4 * QTW[M2, L2] * XI3;
                                 }
                             }
                             else
@@ -301,10 +301,10 @@ namespace CorrosionModel
                                     ((2 / B[M3, L3]) * D1BX * D1BY - D2BXY) * D1XK * XI3;
                                 C = -tilde_A * A[M3, L3] * D4XK * XI3 - 2 * (D1tilde_AX * A[M3, L3] +
                                     D1AX * tilde_A) * D3XK * XI3 - (D2tilde_AX * A[M3, L3] + 2 * D1tilde_AX
-                                    * D1AX + D2AX * tilde_A + Lambda2 * (D2tilde_AY * A_nu[M3, L3] - 2 * D1tilde_AY
-                                    * D1A_nuY - D2A_nuY * tilde_A)) * D2XK * XI3;
+                                    * D1AX + D2AX * tilde_A + Lambda2 * (D2tilde_AY * A_nu[M3, L3] + 2 * D1tilde_AY
+                                    * D1A_nuY + D2A_nuY * tilde_A)) * D2XK * XI3;
 
-                                if (KK == NT - 1)
+                                if (KK == NM - 1)
                                 {
                                     Q = (Lambda2 * (D2tilde_AY * A_nu[M3, L3] + 2 * D1tilde_AY * D1A_nuY + D2A_nuY *
                                         tilde_A) - D2tilde_AX * A[M3, L3] - 2 * D1tilde_AX * D1AX - D2AX *
@@ -375,13 +375,13 @@ namespace CorrosionModel
                             S[IJ, KJ - 2] = A1;
                             S[IJ, KJ - 1] = A2;
                             S[IJ, KJ] = A3;
-                            S[IJ, KJ + 1] = A4 + G2 * A5;
+                            S[IJ, KJ + 1] = A4 + A5;
                         }
                         else if (J_2 == N_1)
                         {
                             S[IJ, KJ - 2] = A1;
-                            S[IJ, KJ - 1] = A2 + G2 * A5;
-                            S[IJ, KJ] = A3 + G2 * A4;
+                            S[IJ, KJ - 1] = A2 + A5;
+                            S[IJ, KJ] = A3 + A4;
                         }
                         XS[IJ] += A6;
                     }

@@ -14,13 +14,13 @@ namespace CorrosionModel
         /// </summary>
         /// <param name="SIG">Диаграмма деформирования</param>
         /// <exception cref="Exception"></exception>
-        public void Cycle(Func<double, double> SIG)
+        public virtual MathCorrosionModel Cycle(Func<double, double> SIG)
         {
             do
             {
                 if (CorrosionModel == CorrosionModels.Dolinskyi)
                 {
-                    if (DolinskyiThickness(Delta_t, MaxEI) <= 0.015 * HMaxEI) break;
+                    if (DolinskyiThickness(Delta_t, SIG(MaxEI)) <= 0.015 * HMaxEI) break;
                     Delta_t /= 2;
                 }
                 else if (CorrosionModel == CorrosionModels.Gutman)
@@ -36,15 +36,13 @@ namespace CorrosionModel
             {
                 if (CorrosionModel == CorrosionModels.Dolinskyi)
                 {
-                    if (DolinskyiThickness(t, MaxEI) > 0.015 * HMaxEI)
+                    if (DolinskyiThickness(t, SIG(MaxEI)) > 0.015 * HMaxEI)
                     {
                         t -= Delta_t;
                         Delta_t /= 2;
                         continue;
                     }
                     DolinskyiThickness(t, SIG);
-                    if (!JF) INTEGER(1, PLAST);
-                    else INTEGER();
                 }
 
                 else if (CorrosionModel == CorrosionModels.Gutman)
@@ -56,17 +54,19 @@ namespace CorrosionModel
                         continue;
                     }
                     GutmanThickness(t);
-                    if (!JF) INTEGER(1, PLAST);
-                    else INTEGER(); 
                 }
                 Console.WriteLine($"Время: {t}, Шаг по времени: {Delta_t}");
-                
+
+                if (!JF) INTEGER(1, PLAST);
+                else INTEGER();
                 CycleBuild();
+
                 if (SIG(MaxEI) >= TensileStrength) throw new Exception("Конец");
             }
+            return this;
         }
 
-        private void CycleBuild()
+        public virtual void CycleBuild()
         {
             if (!JF) Param();
             else if (IL) Varite();
@@ -85,7 +85,7 @@ namespace CorrosionModel
             Console.WriteLine($"ПРОГИБ ПО ПЛАНУ = {PRO}");
 
             SURFW();
-            double VOL = Volume(H, N);
+            double VOL = Volume(H);
 
             Console.WriteLine($"ОБЬЕМ ПЛАСТИНКИ = {VOL}\n");
         }

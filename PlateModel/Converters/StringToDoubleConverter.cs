@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,7 +12,6 @@ namespace WPFPlateModel.Converters
 {
     class StringToDoubleConverter : Freezable, IValueConverter
     {
-
         // ViewModel -> View
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
@@ -22,27 +22,32 @@ namespace WPFPlateModel.Converters
         // View -> ViewModel
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is string s && double.TryParse(s, culture, out double result))
+            if (double.TryParse((string)value, NumberFormatInfo.InvariantInfo, out double result))
             {
-                SetCurrentValue(ErrorTextProperty, null);
+                SetCurrentValue(DoubleErrorTextProperty, null);
                 return result;
             }
-            SetCurrentValue(ErrorTextProperty, 
+            else if (double.TryParse((string)value, culture, out double res))
+            {
+                SetCurrentValue(DoubleErrorTextProperty, null);
+                return res;
+            }
+            SetCurrentValue(DoubleErrorTextProperty,
                 new Dictionary<string, string>() { [parameter?.ToString() ?? ""] = $"Значение '{parameter?.ToString()}' не является числом!" });
             return DependencyProperty.UnsetValue;
         }
         protected override Freezable CreateInstanceCore() => new StringToDoubleConverter();
 
-        public static readonly DependencyProperty ErrorTextProperty =
+        public static readonly DependencyProperty DoubleErrorTextProperty =
         DependencyProperty.Register(
-            nameof(ErrorText),
+            nameof(DoubleErrorText),
             typeof(Dictionary<string, string>),
             typeof(StringToDoubleConverter));
 
-        public Dictionary<string, string>? ErrorText
+        public Dictionary<string, string>? DoubleErrorText
         {
-            get => (Dictionary<string, string>?)GetValue(ErrorTextProperty);
-            set => SetValue(ErrorTextProperty, value);
+            get => (Dictionary<string, string>?)GetValue(DoubleErrorTextProperty);
+            set => SetValue(DoubleErrorTextProperty, value);
         }
     }
 }

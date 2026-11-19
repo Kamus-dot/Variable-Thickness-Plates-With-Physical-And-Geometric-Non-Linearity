@@ -7,35 +7,34 @@ public class Program
     // Точка входа программы.
     public static void Main()
     {
-        MathCorrosionModel model = new();
-
-        int N1 = model.N + 1;
-        int M1 = model.N + 3;
-
-        for (int i = 0; i < N1; i++)
+        MathCorrosionModel m = new();
+        MathCorrosionModel model = new()
         {
-            for (int j = 0; j < N1; j++)
-            {
-                model.H[i, j] = 0.749;
-            }
-        }
-        model.H0 = 0.749;
+            N = 30,
+            ICON = 10,
+            LoadType = MathCorrosionModel.IPL.Transverse,
 
-        double SL = 0.5 / model.N;
-        double SP = Math.PI * SL;
-
-        for (int K = 0; K < model.NT; K++)
-        {
-            int KL = 2 * K + 1;
-            for (int I = 0; I < M1; I++)
-            {
-                double P = Math.Sin(KL * I * SP) / KL;
-                model.X[K, I + 1] = P;
-                model.XF[K, I + 1] = P;
-            }
-        }
+        };
+        model.DQL /= model.ICON;
+        model.QL0 /= model.ICON;
+        model.DQP /= model.ICON;
+        model.QP0 /= model.ICON;
+        model.Start();
         model.StartLoad();
-        model.Cycle(model.PLAST);
+        try
+        {
+            m = model.Cycle(model.PLAST);
+        }
+        catch (Exception ex)
+        {
+            if (model.EmergencyStop)
+            {
+                Console.WriteLine(ex.Message + ", выведена последняя устойчивая версия");
+                throw new Exception();
+            }
+            else m = model;
+        }
+
         Console.WriteLine("Program completed.");
     }
 }

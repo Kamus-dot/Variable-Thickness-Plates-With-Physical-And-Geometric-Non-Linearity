@@ -66,7 +66,7 @@ namespace CorrosionModel
             get => _n; set
             {
                 if (value < 0 || value % 2 != 0) throw new ArgumentException($"Ошибка в объявлении {nameof(N)}: (Разбиение по плану должно быть чётным)");
-                try { ReallocateGrid(); }
+                try { ReallocateGrid(value, _nt, _nm); }
                 catch (Exception e) { throw new Exception($"Не удалось изменить размерность матриц: {e.Message}"); }
                 _n = value;
             }
@@ -84,13 +84,14 @@ namespace CorrosionModel
                     if (_jf)
                     {
                         _nt = 2;
+                        ReallocateGrid(_n, 2, _nm);
                         return;
                     }
                 }
                 catch (Exception) { throw new Exception($"Не удалось присвоить значение элементу {nameof(NT)} из-за необъявленного флага JF"); }
                 if (value > 0)
                 {
-                    try { ReallocateGrid(); }
+                    try { ReallocateGrid(_n, value, _nm); }
                     catch (Exception e) { throw new Exception($"Не удалось изменить размерность матриц: {e.Message}"); }
                     _nt = value;
                 }
@@ -109,6 +110,21 @@ namespace CorrosionModel
         /// </summary>
         public virtual double EPSV { get => _epsv; set => NormDoubleValidation(nameof(EPSV), value, ref _epsv); }
         private double _epsv;
+        /// <summary>
+        /// Количество членов ряда базисной функции 
+        /// <para>(Не рекомендуется использовать больше 4)</para>
+        /// </summary>
+        public virtual int NM
+        {
+            get => _nm;
+            set
+            {
+                try { ReallocateGrid(_n, _nt, value); }
+                catch (Exception e) { throw new Exception($"Не удалось изменить размерность матриц: {e.Message}"); }
+                _nm = value;
+            }
+        }
+        private int _nm;
         /// <summary>
         /// Модуль упругости в физически линейной задаче
         /// </summary>
@@ -209,14 +225,17 @@ namespace CorrosionModel
         public double[,] TENS_AVG { get; set; }
         /// <summary>
         /// Полные деформации пластины по направлению x
+        /// <para>(3-ий индекс указывает на номер слоя, где 0 - нижний, NT - верхний)</para>
         /// </summary>
         public double[,,] EX { get; set; }
         /// <summary>
         /// Полные деформации пластины по направлению y
+        /// <para>(3-ий индекс указывает на номер слоя, где 0 - нижний, NT - верхний)</para>
         /// </summary>
         public double[,,] EY { get; set; }
         /// <summary>
         /// Полные деформации сдвига
+        /// <para>(3-ий индекс указывает на номер слоя, где 0 - самый нижний, NT - самый верхний)</para>
         /// </summary>
         public double[,,] EXY { get; set; }
         /// Начальное значение поперечной нагрузки
@@ -289,45 +308,16 @@ namespace CorrosionModel
         public enum CorrosionModels { Dolinskyi, Gutman };
         public CorrosionModels CorrosionModel { get; set; }
         private double[,,] Resilience { get; set; }
+
         private double MaxEI;
         private double HMaxEI;
         private double MaxAVG;
         private double HMaxAVG;
+        // Флаг на случай преждевременной остановки.
+        public bool EmergencyStop = false;
         public MathCorrosionModel()
         {
             Initialize();
-
-            int N4 = N + 4;
-            int N1 = N + 1;
-
-            X = new double[NT, N4];
-            Y = new double[NT, N4];
-            XF = new double[NT, N4];
-            YF = new double[NT, N4];
-
-            A = new double[N4, N4];
-            A_nu = new double[N4, N4];
-            AZ = new double[N4, N4];
-            AZ_nu = new double[N4, N4];
-            B = new double[N4, N4];
-            BZ = new double[N4, N4];
-            Corrosion = new double[N4, N4];
-
-            H = new double[N1, N1];
-            QTW = new double[N1, N1];
-            QTF = new double[N1, N1];
-            WXY = new double[N1, N1];
-            FXY = new double[N1, N1];
-            SVO = new double[N1, N1];
-            SEN = new double[N1, N1];
-
-            TENS_AVG = new double[N1, N1];
-
-            DEF_INT = new double[N1, N1, NT + 1];
-            EX = new double[N1, N1, NT + 1];
-            EY = new double[N1, N1, NT + 1];
-            EXY = new double[N1, N1, NT + 1];
-            Resilience = new double[N1, N1, NT + 1];
 
             V2 = Math.Pow((double)1 / (2 * N), 2);
         }

@@ -1,7 +1,7 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using CorrosionModel;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using CorrosionModel;
+using WPFPlateModel.ViewModels;
 
 namespace WPFPlateModel
 {
@@ -10,15 +10,34 @@ namespace WPFPlateModel
     /// </summary>
     public partial class App : Application
     {
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
+        private ServiceProvider? _serviceProvider;
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var services = new ServiceCollection();
+
+            ConfigureServices(services);
+            _serviceProvider = services.BuildServiceProvider();
+
+            Window entranceWindow = _serviceProvider.GetService<EntranceWindow>() ?? throw new Exception("Ошибка в конфигурации сервисов");
+            entranceWindow.Show();
         }
 
-        private void Application_Exit(object sender, ExitEventArgs e)
+        private void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<PlateStateStorage>();
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<MainWindow>();
+            services.AddTransient<EntranceViewModel>();
+            services.AddTransient<EntranceWindow>();
+        }
 
+        protected override void OnExit(ExitEventArgs e)
+        {
+            _serviceProvider?.Dispose();
+            base.OnExit(e);
         }
     }
-
 }

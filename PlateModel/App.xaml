@@ -3,9 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPFPlateModel"
              xmlns:ent="clr-namespace:WPFPlateModel.ViewModels"
-             xmlns:cnvtr="clr-namespace:WPFPlateModel.Converters"
-             StartupUri="Views/EntranceWindow.xaml"
-             Startup="Application_Startup" Exit="Application_Exit">
+             xmlns:cnvtr="clr-namespace:WPFPlateModel.Converters">
     <Application.Resources>
         <ResourceDictionary>
 

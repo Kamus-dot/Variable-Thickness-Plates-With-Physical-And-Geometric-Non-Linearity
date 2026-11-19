@@ -16,7 +16,7 @@ namespace CorrosionModel
         /// </summary>
         public virtual void Initialize()
         {
-            using (StreamReader reader = new StreamReader("DIVD.DAT"))
+            using (StreamReader reader = new("DIVD.DAT"))
             {
                 var customNumberFormat = new NumberFormatInfo
                 {
@@ -29,9 +29,8 @@ namespace CorrosionModel
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 NT = int.Parse(parts[0]);
                 N = int.Parse(parts[1]);
-                NT = int.Parse(parts[2]);
-                EPSP = double.Parse(parts[3], customNumberFormat);
-                EPSV = double.Parse(parts[4], customNumberFormat);
+                EPSP = double.Parse(parts[2], customNumberFormat);
+                EPSV = double.Parse(parts[3], customNumberFormat);
 
                 line = reader.ReadLine();
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -54,6 +53,7 @@ namespace CorrosionModel
                 line = reader.ReadLine();
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 Lambda = double.Parse(parts[0], customNumberFormat);
+                H0 = double.Parse(parts[1], customNumberFormat);
 
                 line = reader.ReadLine();
                 parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -77,32 +77,45 @@ namespace CorrosionModel
             CorrosionModel = CorrosionModels.Dolinskyi;
             Delta_t = 0.1;
             TimeLimit = 70;
+            NM = 3;
         }
         /// <summary>
-        /// Вызывается в случае изменения размерности сетки (по плану, либо по толщине)
+        /// Вызывается в случае изменения размерности сетки (по плану, либо по толщине),
+        /// либо при изменении числа членов ряда базисной функции
         /// </summary>
-        public virtual void ReallocateGrid()
+        public virtual void ReallocateGrid(int N, int NT, int NM)
         {
             int N4 = N + 4;
             int N1 = N + 1;
+            int NT1 = NT + 1;
 
-            X = new double[NT, N4];
-            Y = new double[NT, N4];
-            XF = new double[NT, N4];
-            YF = new double[NT, N4];
+            X = new double[NM, N4];
+            Y = new double[NM, N4];
+            XF = new double[NM, N4];
+            YF = new double[NM, N4];
 
             H = new double[N1, N1];
             WXY = new double[N1, N1];
             FXY = new double[N1, N1];
             SVO = new double[N1, N1];
             SEN = new double[N1, N1];
+            QTW = new double[N1, N1];
 
             TENS_AVG = new double[N1, N1];
 
-            DEF_INT = new double[N1, N1, NT + 1];
-            EX = new double[N1, N1, NT + 1];
-            EY = new double[N1, N1, NT + 1];
-            EXY = new double[N1, N1, NT + 1];
+            DEF_INT = new double[N1, N1, NT1];
+            EX = new double[N1, N1, NT1];
+            EY = new double[N1, N1, NT1];
+            EXY = new double[N1, N1, NT1];
+            Resilience = new double[N1, N1, NT1];
+
+            A = new double[N4, N4];
+            A_nu = new double[N4, N4];
+            AZ = new double[N4, N4];
+            AZ_nu = new double[N4, N4];
+            B = new double[N4, N4];
+            BZ = new double[N4, N4];
+            Corrosion = new double[N4, N4];
         }
     }
 }

@@ -23,10 +23,20 @@
                 <ResourceDictionary Source="/Resources/EntranceStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <cnvtr:StringToDoubleConverter x:Key="StringToDouble" 
-                                ErrorText="{Binding ConverterException, 
+                                DoubleErrorText="{Binding ConverterException, 
+                                            Mode=OneWayToSource}"/>
+            <cnvtr:StringToIntConverter x:Key="StringToInt"
+                                IntErrorText="{Binding ConverterException, 
                                             Mode=OneWayToSource}"/>
         </ResourceDictionary>
     </Window.Resources>
+    
+    <i:Interaction.Triggers>
+        <i:DataTrigger Binding="{Binding IsWindowClosed, Mode=TwoWay}" Value="True">
+            <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
+                                MethodName="Close"/>
+        </i:DataTrigger>
+    </i:Interaction.Triggers>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                   Background="{StaticResource CardBackgroundBrush}" 
@@ -55,11 +65,12 @@
 
                     <Label Content="Разбиение пластинки по плану:"/>
                     <TextBox x:Name="EquipartitionXY" Style="{StaticResource TextBoxDefault}" 
-                             Text="{Binding N, Mode=TwoWay, FallbackValue=''}"/>
+                        Text="{Binding N, Mode=TwoWay, FallbackValue='', 
+                        Converter={StaticResource StringToInt}, ConverterParameter=N}"/>
 
                     <Label Content="Разбиение пластинки по толщине:"/>
                     <TextBox x:Name="EquipartitionZ" Text="{Binding NT, Mode=TwoWay, FallbackValue='', 
-                        Converter={StaticResource StringToDouble}, ConverterParameter=NT}">
+                        Converter={StaticResource StringToInt}, ConverterParameter=NT}">
                         <TextBox.Style>
                             <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxDefault}">
                                 <Style.Triggers>
@@ -73,6 +84,11 @@
                         </TextBox.Style>
                     </TextBox>
 
+                    <Label Content="Количество членов ряда базисной функции:"/>
+                    <TextBox x:Name="Basis" Style="{StaticResource TextBoxDefault}" 
+                            Text="{Binding NM, Mode=TwoWay, FallbackValue='', 
+                            Converter={StaticResource StringToInt}, ConverterParameter=NM}"/>    
+                    
                     <Label Content="Отношение длины к ширине пластины:"/>
                     <TextBox x:Name="AspectRatio" Style="{StaticResource TextBoxDefault}" 
                              Text="{Binding Lambda, Mode=TwoWay, FallbackValue='', 
@@ -127,12 +143,12 @@
 
                     <Label Content="Погрешность вычислений в методе переменных параметров упругости:"/>
                     <TextBox x:Name="ResilienceImprecision" Style="{StaticResource TextBoxDefault}" 
-                             Text="{Binding EPSP, Mode=TwoWay, FallbackValue='', 
+                        Text="{Binding EPSP, Mode=TwoWay, FallbackValue='', 
                         ValidatesOnExceptions=True, Converter={StaticResource StringToDouble}, ConverterParameter=EPSP}"/>
 
                     <Label Content="Погрешность вычислений в методе вариационных итераций:"/>
                     <TextBox x:Name="VariationImprecision" Style="{StaticResource TextBoxDefault}" 
-                             Text="{Binding EPSV, Mode=TwoWay, FallbackValue='', 
+                        Text="{Binding EPSV, Mode=TwoWay, FallbackValue='', 
                         Converter={StaticResource StringToDouble}, ConverterParameter=EPSV}"/>
 
                     <Label Content="Модель коррозийного износа:"/>
@@ -143,7 +159,7 @@
 
                     <Label Content="Лимит по времени:"/>
                     <TextBox x:Name="TimeLimit" Style="{StaticResource TextBoxDefault}" 
-                             Text="{Binding TimeLimit, Mode=TwoWay, FallbackValue='',
+                        Text="{Binding TimeLimit, Mode=TwoWay, FallbackValue='',
                         Converter={StaticResource StringToDouble}, ConverterParameter=TimeLimit}"/>
                 </StackPanel>
             </Border>
@@ -185,7 +201,9 @@
 
                     <Label Content="Размерность продольной нагрузки:"/>
                     <TextBox x:Name="LoadingDimension" Style="{StaticResource TextBoxDefault}" 
-                             Text="{Binding ICON, Mode=TwoWay, FallbackValue='', NotifyOnValidationError=True}">
+                        Text="{Binding ICON, Mode=TwoWay, FallbackValue='', 
+                        NotifyOnValidationError=True, Converter={StaticResource StringToInt}, 
+                        ConverterParameter=ICON}">
                     </TextBox>
                 </StackPanel>
             </Border>
@@ -306,13 +324,13 @@
                                                         Value=""/>
                                 <i:ChangePropertyAction TargetName="LongitudinalFinal" 
                                                         PropertyName="IsEnabled"
-                                                        Value="False"/>                     
+                                                        Value="False"/>
                             </i:DataTrigger>
                             <i:DataTrigger Binding="{Binding ElementName=Longitudinal, 
                                            Path=IsSelected}" Value="False">
                                 <i:ChangePropertyAction TargetName="LongitudinalFinal" 
                                                         PropertyName="IsEnabled"
-                                                        Value="True"/>      
+                                                        Value="True"/>
                                 <i:InvokeCommandAction Command="{Binding UpdateCommand}"
                                                        CommandParameter="QLE"/>
                             </i:DataTrigger>
@@ -326,7 +344,6 @@
                         Style="{StaticResource PrimaryButtonStyle}"
                         Command="{Binding ApplyCommand}"/>
             </StackPanel>
-
         </StackPanel>
     </ScrollViewer>
 </Window>

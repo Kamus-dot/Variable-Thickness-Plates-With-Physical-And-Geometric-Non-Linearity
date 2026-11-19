@@ -9,14 +9,17 @@ using CorrosionModel;
 
 namespace WPFPlateModel.Models
 {
+    /// <summary>
+    /// Модель пластины для WPF приложения
+    /// </summary>
     public class PlateModel : MathCorrosionModel
     {
         public override void Initialize()
         {
             // Инициализация входных параметров по умолчанию
+            N = 30;
             NT = 2;
-            N = 8;
-            NT = 2;
+            NM = 3;
             EPSP = 0.01;
             EPSV = 0.01;
 
@@ -35,6 +38,7 @@ namespace WPFPlateModel.Models
             IL = false;
 
             Lambda = 1.0;
+            H0 = 0.749;
 
             QP0 = 0.5;
             QPE = 100;
@@ -44,19 +48,16 @@ namespace WPFPlateModel.Models
             QLE = 1.2;
             DQL = 0.1;
 
-            LoadType = IPL.Transverse;
-            ICON = 4;
+            LoadType = IPL.Both;
+            ICON = 10;
             QK = 1;
             G1 = 0.57;
 
             CorrosionModel = CorrosionModels.Dolinskyi;
             Delta_t = 0.1;
             TimeLimit = 70;
-            H0 = 1.0;
         }
 
-        public PlateModel() : base()
-        {
-        }
+        public PlateModel() : base() { }
     }
 }

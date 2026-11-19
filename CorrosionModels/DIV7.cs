@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,6 +47,7 @@ namespace CorrosionModel
                 Count++;
                 if (Count > 500)
                 {
+                    EmergencyStop = true;
                     throw new Exception("Потеря сходимости метода МВИ (пластина разрушена)");
                 }
                 //Console.WriteLine($"VARITE XY: Разница: {Math.Abs((P1 - P2) / P2) / omega}, P1 = {P1}, P2 = {P2}");
@@ -99,6 +101,7 @@ namespace CorrosionModel
                     Count++;
                     if (Count > 500)
                     {
+                        EmergencyStop = true;
                         throw new Exception("Потеря сходимости метода МВИ (пластина разрушена)");
                     }
                     //Console.WriteLine($"VAR XY: Разница: {Math.Abs((P1 - P2) / P2) / omega}, P1 = {P1}, P2 = {P2}");
@@ -141,6 +144,7 @@ namespace CorrosionModel
                     Count++;
                     if (Count > 500)
                     {
+                        EmergencyStop = true;
                         throw new Exception("Потеря сходимости метода МВИ (пластина разрушена)");
                     }
                     //Console.WriteLine($"VAR XFYF: Разница: {Math.Abs((P1 - P2) / P2) / omega}, P1 = {P1}, P2 = {P2}");
@@ -163,7 +167,11 @@ namespace CorrosionModel
                 prevOuterDiff = outerDiff;
                 outerCount++;
                 Console.WriteLine($"VAR: Разница: {Math.Abs((S1 - S2) / S2) / outerOmega}, S1 = {S1}, S2 = {S2}");
-                if (outerCount > 100) throw new Exception ("Пластина не сходится");
+                if (outerCount > 100)
+                {
+                    EmergencyStop = true;
+                    throw new Exception("Пластина не сходится");
+                }
             }
             while (Math.Abs((S1 - S2) / S2) / outerOmega > EPSV);
             return;

@@ -10,13 +10,13 @@ namespace CorrosionModel
     {
         public static double PROGIB(double[,] H, int N)
         {
-            double[] S1 = new double[12];
-            double[] S2 = new double[12];
+            int N1 = N + 1;
+            double[] S1 = new double[N1];
+            double[] S2 = new double[N1];
             double C = 1;
-            int M = N + 1;
-            for (int I = 0; I < M; I++)
+            for (int I = 0; I < N1; I++)
             {
-                for (int J = 0; J < M; J++)
+                for (int J = 0; J < N1; J++)
                 {
                     S1[J] = H[I, J];
                 }

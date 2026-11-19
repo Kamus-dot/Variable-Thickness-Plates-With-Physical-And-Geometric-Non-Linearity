@@ -14,9 +14,9 @@ namespace CorrosionModel
         /// <param name="H">Матрица толщин</param>
         /// <param name="N">Размерность матрицы</param>
         /// <returns></returns>
-        public static double Volume(double[,] H, int N)
+        public static double Volume(double[,] H)
         {
-            int M = N + 1;
+            int M = H.GetLength(0);
             double[] S1 = new double[M];
             double[] S2 = new double[M];
             double C = 1;
@@ -26,9 +26,9 @@ namespace CorrosionModel
                 {
                     S1[J] = H[I, J];
                 }
-                S2[I] = SIM(S1, C, N);
+                S2[I] = SIM(S1, C, M - 1);
             }
-            return SIM(S2, C, N);
+            return SIM(S2, C, M - 1);
         }
     }
 }

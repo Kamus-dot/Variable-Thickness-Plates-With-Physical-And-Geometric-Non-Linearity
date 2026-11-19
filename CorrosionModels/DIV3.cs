@@ -37,6 +37,7 @@ namespace CorrosionModel
                 Count++;
                 if (Count > 100)
                 {
+                    EmergencyStop = true;
                     throw new Exception("Превышено число итераций по пластичности");
                 }
             }

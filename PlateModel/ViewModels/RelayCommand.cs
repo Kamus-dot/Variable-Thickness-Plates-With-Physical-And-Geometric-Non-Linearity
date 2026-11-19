@@ -12,7 +12,6 @@ namespace WPFPlateModel.ViewModels
     {
         private readonly Action<object> _execute;
         private readonly Func<object, bool> _canExecute;
-        public RelayCommand() { }
         public RelayCommand(Action<object> execute) : this(execute, null) { }
         public RelayCommand(Action<object> execute, Func<object, bool> canExecute)
         {
