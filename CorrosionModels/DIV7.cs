@@ -166,7 +166,7 @@ namespace CorrosionModel
                 }
                 prevOuterDiff = outerDiff;
                 outerCount++;
-                Console.WriteLine($"VAR: Разница: {Math.Abs((S1 - S2) / S2) / outerOmega}, S1 = {S1}, S2 = {S2}");
+                //Console.WriteLine($"VAR: Разница: {Math.Abs((S1 - S2) / S2) / outerOmega}, S1 = {S1}, S2 = {S2}");
                 if (outerCount > 100)
                 {
                     EmergencyStop = true;

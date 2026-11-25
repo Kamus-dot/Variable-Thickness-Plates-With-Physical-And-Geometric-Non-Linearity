@@ -11,7 +11,7 @@ namespace CorrosionModel
         /// <summary>
         /// Метод, рассчитывающий матрицу прогиба или усилий.
         /// </summary>
-        /// <param name="IWF">Флаг</param>
+        /// <param name="IWF"></param>
         public void Deflec(int IWF)
         {
             int N1 = N + 1;

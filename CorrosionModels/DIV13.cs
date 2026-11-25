@@ -12,7 +12,6 @@ namespace CorrosionModel
         /// Объём пластины
         /// </summary>
         /// <param name="H">Матрица толщин</param>
-        /// <param name="N">Размерность матрицы</param>
         /// <returns></returns>
         public static double Volume(double[,] H)
         {
@@ -26,9 +25,9 @@ namespace CorrosionModel
                 {
                     S1[J] = H[I, J];
                 }
-                S2[I] = SIM(S1, C, M - 1);
+                S2[I] = Integrate(S1, C, M - 1);
             }
-            return SIM(S2, C, M - 1);
+            return Integrate(S2, C, M - 1);
         }
     }
 }

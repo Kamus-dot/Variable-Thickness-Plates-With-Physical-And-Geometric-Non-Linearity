@@ -37,7 +37,9 @@
                 Camera="{Binding Camera}"
                 EffectsManager="{Binding EffectsManager}"
                 ModelUpDirection="{Binding UpDirection}"
-                ShowViewCube="False">
+                ShowViewCube="False"
+                FXAALevel="High"
+                MSAA="Eight">
                 <hx:Viewport3DX.InputBindings>
                     <MouseBinding Command="hx:ViewportCommands.Rotate"
                               Gesture="LeftClick" />

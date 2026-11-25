@@ -44,7 +44,7 @@ namespace CorrosionModel
             double[] EE = new double[N21];
 
             double[] SL = new double[N21];
-            double[] S = new double[N21];
+
             int M2 = 2 * N; 
             for (int I = 0; I < NM; I++)
             {
@@ -76,7 +76,7 @@ namespace CorrosionModel
                                     EE[M] = Math.Pow(X[I, M], 2);
                                 }
                                 // Можно выразить как (En, Xn+1)/(En, En)
-                                SL[I] = SIM(XE, A, M2) / SIM(EE, A, M2);
+                                SL[I] = Integrate(XE, A, M2) / Integrate(EE, A, M2);
                             }
                             F += SL[I] * E[I, L];
                         }
@@ -126,7 +126,7 @@ namespace CorrosionModel
                     }
                 }
 
-                // Проверка выполнения нормирования (пример для 3-х слоёв)
+                // Проверка выполнения нормирования (пример для 3-х членов)
                 // (также необходимо раскомментировать блок сверху)
 
                 //double SUM1 = 0;

@@ -10,15 +10,15 @@ public class Program
         MathCorrosionModel m = new();
         MathCorrosionModel model = new()
         {
-            N = 30,
-            ICON = 10,
+            N = 4,
+            NT = 8,
+            ICON = 2,
+            QL0 = 0.5,
+            DQL = 0.1,
+            DQP = 0.1,
             LoadType = MathCorrosionModel.IPL.Transverse,
-
+            //CorrosionModel = MathCorrosionModel.CorrosionModels.Gutman
         };
-        model.DQL /= model.ICON;
-        model.QL0 /= model.ICON;
-        model.DQP /= model.ICON;
-        model.QP0 /= model.ICON;
         model.Start();
         model.StartLoad();
         try

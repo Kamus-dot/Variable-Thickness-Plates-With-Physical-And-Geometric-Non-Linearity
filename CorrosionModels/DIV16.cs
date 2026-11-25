@@ -30,7 +30,7 @@ namespace CorrosionModel
             double[] S6 = new double[NT1];
             double GOM = 3 * OMY;
             EMIN = EO;
-            DeformationIntesivity();
+            DeformationIntesivity(false);
 
             if (CorrosionModel == CorrosionModels.Gutman)
             {
@@ -106,12 +106,12 @@ namespace CorrosionModel
                         if (E < EMIN) EMIN = E;
                     }
 
-                    A[I1, J1] = SIM(S1, H[I, J], NT);
-                    A_nu[I1, J1] = SIM(S2, H[I, J], NT);
-                    AZ[I1, J1] = SIM(S3, H[I, J], NT);
-                    AZ_nu[I1, J1] = SIM(S4, H[I, J], NT);
-                    B[I1, J1] = SIM(S5, H[I, J], NT);
-                    BZ[I1, J1] = SIM(S6, H[I, J], NT);
+                    A[I1, J1] = Integrate(S1, H[I, J], NT);
+                    A_nu[I1, J1] = Integrate(S2, H[I, J], NT);
+                    AZ[I1, J1] = Integrate(S3, H[I, J], NT);
+                    AZ_nu[I1, J1] = Integrate(S4, H[I, J], NT);
+                    B[I1, J1] = Integrate(S5, H[I, J], NT);
+                    BZ[I1, J1] = Integrate(S6, H[I, J], NT);
                 }
             }
             Extrapolation();
@@ -128,12 +128,16 @@ namespace CorrosionModel
                     int J1 = J + 1;
                     for (int K = 0; K < NT + 1; K++) { Resilience[I, J, K] = EO; }
 
-                    A[I1, J1] = H[I, J] * EO / (1 - Pow(HUO, 2));
-                    A_nu[I1, J1] = H[I, J] * EO * HUO / (1 - Pow(HUO, 2));
-                    AZ[I1, J1] = Pow(H[I, J], 3) * EO / (3 * (1 - Pow(HUO, 2)));
-                    AZ_nu[I1, J1] = Pow(H[I, J], 3) * EO * HUO / (1 - Pow(HUO, 2));
-                    B[I1, J1] = H[I, J] * EO / (2 * (1 + HUO));
-                    BZ[I1, J1] = Pow(H[I, J], 3) * EO / (3 * (1 + HUO));
+                    double z_bot = -H0 / 2.0;
+                    double z_top = H[I, J] - H0 / 2.0;
+                    double h_tilde = (Pow(z_top, 3) - Pow(z_bot, 3)) / 3.0;
+
+                    A[I1, J1] = H[I, J] * EO / (1.0 - Pow(HUO, 2));
+                    A_nu[I1, J1] = H[I, J] * EO * HUO / (1.0 - Pow(HUO, 2));
+                    AZ[I1, J1] = h_tilde * EO / (1.0 - Pow(HUO, 2));
+                    AZ_nu[I1, J1] = h_tilde * EO * HUO / (1.0 - Pow(HUO, 2));
+                    B[I1, J1] = H[I, J] * EO / (2.0 * (1.0 + HUO));
+                    BZ[I1, J1] = h_tilde * EO / (1.0 + HUO);
                 }
             }
             EMIN = EO;
@@ -141,56 +145,56 @@ namespace CorrosionModel
         }
         private void Extrapolation()
         {
-            int N1 = N + 1;
+            int N_1 = N - 1;
             int N2 = N + 2;
             int N3 = N + 3;
             int N4 = N + 4;
 
             for (int I = 0; I < N4; I++)
             {
-                A[I, N2] = A[I, N1];
-                A[N2, I] = A[N1, I];
-                AZ[I, N2] = AZ[I, N1];
-                AZ[N2, I] = AZ[N1, I];
-                A_nu[I, N2] = A_nu[I, N1];
-                A_nu[N2, I] = A_nu[N1, I];
-                AZ_nu[I, N2] = AZ_nu[I, N1];
-                AZ_nu[N2, I] = AZ_nu[N1, I];
-                B[I, N2] = B[I, N1];
-                B[N2, I] = B[N1, I];
-                BZ[I, N2] = BZ[I, N1];
-                BZ[N2, I] = BZ[N1, I];
-                A[N3, I] = A[N, I];
-                A[I, N3] = A[I, N];
-                AZ[N3, I] = AZ[N, I];
-                AZ[I, N3] = AZ[I, N];
-                A_nu[N3, I] = A_nu[N, I];
-                A_nu[I, N3] = A_nu[I, N];
-                AZ_nu[N3, I] = AZ_nu[N, I];
-                AZ_nu[I, N3] = AZ_nu[I, N];
-                B[N3, I] = B[N, I];
-                B[I, N3] = B[I, N];
-                BZ[N3, I] = BZ[N, I];
-                BZ[I, N3] = BZ[I, N];
-                A[I, 0] = 2.0 * A[I, 1] - A[I, 2];
-                AZ[I, 0] = 2.0 * AZ[I, 1] - AZ[I, 2];
-                A_nu[I, 0] = 2.0 * A_nu[I, 1] - A_nu[I, 2];
-                AZ_nu[I, 0] = 2.0 * AZ_nu[I, 1] - AZ_nu[I, 2];
-                B[I, 0] = 2.0 * B[I, 1] - B[I, 2];
-                BZ[I, 0] = 2.0 * BZ[I, 1] - BZ[I, 2];
-                A[0, I] = 2.0 * A[1, I] - A[2, I];
-                AZ[0, I] = 2.0 * AZ[1, I] - AZ[2, I];
-                A_nu[0, I] = 2.0 * A_nu[1, I] - A_nu[2, I];
-                AZ_nu[0, I] = 2.0 * AZ_nu[1, I] - AZ_nu[2, I];
-                BZ[0, I] = 2.0 * BZ[1, I] - BZ[2, I];
-                B[0, I] = 2.0 * B[1, I] - B[2, I];
+                A[I, N2] = A[I, N];
+                A[N2, I] = A[N, I];
+                AZ[I, N2] = AZ[I, N];
+                AZ[N2, I] = AZ[N, I];
+                A_nu[I, N2] = A_nu[I, N];
+                A_nu[N2, I] = A_nu[N, I];
+                AZ_nu[I, N2] = AZ_nu[I, N];
+                AZ_nu[N2, I] = AZ_nu[N, I];
+                B[I, N2] = B[I, N];
+                B[N2, I] = B[N, I];
+                BZ[I, N2] = BZ[I, N];
+                BZ[N2, I] = BZ[N, I];
+                A[N3, I] = A[N_1, I];
+                A[I, N3] = A[I, N_1];
+                AZ[N3, I] = AZ[N_1, I];
+                AZ[I, N3] = AZ[I, N_1];
+                A_nu[N3, I] = A_nu[N_1, I];
+                A_nu[I, N3] = A_nu[I, N_1];
+                AZ_nu[N3, I] = AZ_nu[N_1, I];
+                AZ_nu[I, N3] = AZ_nu[I, N_1];
+                B[N3, I] = B[N_1, I];
+                B[I, N3] = B[I, N_1];
+                BZ[N3, I] = BZ[N_1, I];
+                BZ[I, N3] = BZ[I, N_1];
+                A[I, 0] = 3.0 * A[I, 1] - 3.0 * A[I, 2] + A[I, 3];
+                AZ[I, 0] = 3.0 * AZ[I, 1] - 3.0 * AZ[I, 2] + AZ[I, 3];
+                A_nu[I, 0] = 3.0 * A_nu[I, 1] - 3.0 * A_nu[I, 2] + A_nu[I, 3];
+                AZ_nu[I, 0] = 3.0 * AZ_nu[I, 1] - 3.0 * AZ_nu[I, 2] + AZ_nu[I, 3];
+                B[I, 0] = 3.0 * B[I, 1] - 3.0 * B[I, 2] + B[I, 3];
+                BZ[I, 0] =  3.0 * BZ[I, 1] - 3.0 * BZ[I, 2] + BZ[I, 3];
+                A[0, I] = 3.0 * A[1, I] - 3.0 * A[2, I] + A[3, I];
+                AZ[0, I] = 3.0 * AZ[1, I] - 3.0 * AZ[2, I] + AZ[3, I];
+                A_nu[0, I] = 3.0 * A_nu[1, I] - 3.0 * A_nu[2, I] + A_nu[3, I];
+                AZ_nu[0, I] = 3.0 * AZ_nu[1, I] - 3.0 * AZ_nu[2, I] + AZ_nu[3, I];
+                BZ[0, I] = 3.0 * BZ[1, I] - 3.0 * BZ[2, I] + BZ[3, I];
+                B[0, I] = 3.0 * B[1, I] - 3.0 * B[2, I] + B[3, I];
             }
-            A[0, 0] = 2.0 * A[0, 1] - A[0, 2];
-            AZ[0, 0] = 2.0 * AZ[0, 1] - AZ[0, 2];
-            A_nu[0, 0] = 2.0 * A_nu[0, 1] - A_nu[0, 2];
-            AZ_nu[0, 0] = 2.0 * AZ_nu[0, 1] - AZ_nu[0, 2];
-            B[0, 0] = 2.0 * B[0, 1] - B[0, 2];
-            BZ[0, 0] = 2.0 * BZ[0, 1] - BZ[0, 2];
+            A[0, 0] = 3.0 * A[0, 1] - 3.0 * A[0, 2] + A[0, 3];
+            AZ[0, 0] = 3.0 * AZ[0, 1] - 3.0 * AZ[0, 2] + AZ[0, 3];
+            A_nu[0, 0] = 3.0 * A_nu[0, 1] - 3.0 * A_nu[0, 2] + A_nu[0, 3];
+            AZ_nu[0, 0] = 3.0 * AZ_nu[0, 1] - 3.0 * AZ_nu[0, 2] + AZ_nu[0, 3];
+            B[0, 0] = 3.0 * B[0, 1] - 3.0 * B[0, 2] + B[0, 3];
+            BZ[0, 0] = 3.0 * B[0, 1] - 3.0 * B[0, 2] + B[0, 3];
         }
     }
 }

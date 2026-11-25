@@ -57,7 +57,8 @@ namespace CorrosionModel
         /// <summary>
         /// Шаг сетки в квадрате
         /// </summary>
-        public double V2 { get; }
+        public double V2 => _v2;
+        private double _v2;
         /// <summary>
         /// Число шагов конечно-разностной сетки по одной из координат
         /// </summary>
@@ -69,6 +70,7 @@ namespace CorrosionModel
                 try { ReallocateGrid(value, _nt, _nm); }
                 catch (Exception e) { throw new Exception($"Не удалось изменить размерность матриц: {e.Message}"); }
                 _n = value;
+                _v2 = Math.Pow(1.0 / (2.0 * N), 2);
             }
         }
         private int _n;
@@ -238,9 +240,18 @@ namespace CorrosionModel
         /// <para>(3-ий индекс указывает на номер слоя, где 0 - самый нижний, NT - самый верхний)</para>
         /// </summary>
         public double[,,] EXY { get; set; }
+        ///<summary>
         /// Начальное значение поперечной нагрузки
         /// </summary>
         public virtual double QP0 { get; set; }
+        ///<summary>
+        /// Перемещения по x
+        ///</summary>
+        public double[,,] dU_dX { get; set; }
+        ///<summary>
+        /// Перемещения по y
+        ///</summary>
+        public double[,,] dV_DY { get; set; }
         /// <summary>
         /// Конечное значение поперечной нагрузки
         /// </summary>
@@ -273,6 +284,7 @@ namespace CorrosionModel
         /// Продольная нагрузка
         /// </summary>
         public double QL { get; set; }
+        /// <summary>
         /// QK = 0 - Одноостное сжатие
         /// QK = 1 - Двуостное сжатие
         /// </summary>
@@ -313,13 +325,17 @@ namespace CorrosionModel
         private double HMaxEI;
         private double MaxAVG;
         private double HMaxAVG;
+
+        // Координаты максимума
+        private int MaxI;
+        private int MaxJ;
+        private int MaxK;
+
         // Флаг на случай преждевременной остановки.
         public bool EmergencyStop = false;
         public MathCorrosionModel()
         {
             Initialize();
-
-            V2 = Math.Pow((double)1 / (2 * N), 2);
         }
         private static void NormDoubleValidation(string valueName, double value, ref double _value)
         {

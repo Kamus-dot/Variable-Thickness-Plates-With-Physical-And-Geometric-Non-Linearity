@@ -80,8 +80,8 @@ namespace CorrosionModel
             NM = 3;
         }
         /// <summary>
-        /// Вызывается в случае изменения размерности сетки (по плану, либо по толщине),
-        /// либо при изменении числа членов ряда базисной функции
+        /// Вызывается в случае изменения размерности сетки (по плану, либо по толщине,
+        /// либо при изменении числа членов ряда базисной функции)
         /// </summary>
         public virtual void ReallocateGrid(int N, int NT, int NM)
         {
@@ -107,6 +107,8 @@ namespace CorrosionModel
             EX = new double[N1, N1, NT1];
             EY = new double[N1, N1, NT1];
             EXY = new double[N1, N1, NT1];
+            dU_dX = new double[N1, N1, 2];
+            dV_DY = new double[N1, N1, 2];
             Resilience = new double[N1, N1, NT1];
 
             A = new double[N4, N4];

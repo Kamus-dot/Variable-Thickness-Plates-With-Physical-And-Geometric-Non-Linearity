@@ -17,8 +17,8 @@ namespace WPFPlateModel.Models
         public override void Initialize()
         {
             // Инициализация входных параметров по умолчанию
-            N = 30;
-            NT = 2;
+            N = 4;
+            NT = 8;
             NM = 3;
             EPSP = 0.01;
             EPSV = 0.01;
@@ -40,22 +40,22 @@ namespace WPFPlateModel.Models
             Lambda = 1.0;
             H0 = 0.749;
 
-            QP0 = 0.5;
+            QP0 = 0.1;
             QPE = 100;
             DQP = 0.5;
 
-            QL0 = 0;
+            QL0 = 0.1;
             QLE = 1.2;
             DQL = 0.1;
 
             LoadType = IPL.Both;
-            ICON = 10;
+            ICON = 2;
             QK = 1;
             G1 = 0.57;
 
             CorrosionModel = CorrosionModels.Dolinskyi;
             Delta_t = 0.1;
-            TimeLimit = 70;
+            TimeLimit = 2;
         }
 
         public PlateModel() : base() { }

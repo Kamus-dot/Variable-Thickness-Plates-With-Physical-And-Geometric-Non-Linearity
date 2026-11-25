@@ -105,14 +105,14 @@ namespace CorrosionModel
             for (int I = 0; I < NM; I++)
             {
                 KN[I, 0] = G1 * KN[I, 2];
-                KN[I, N2] = KN[I, N1];
-                KN[I, N3] = KN[I, N];
+                KN[I, N2] = KN[I, N];
+                KN[I, N3] = KN[I, N_1];
                 Rt_kn[I, 0] = GF1 * Rt_kn[I, 2];
-                Rt_kn[I, N2] = Rt_kn[I, N1];
-                Rt_kn[I, N3] = Rt_kn[I, N];
+                Rt_kn[I, N2] = Rt_kn[I, N];
+                Rt_kn[I, N3] = Rt_kn[I, N_1];
                 Rt_unk[I, 0] = GF2 * Rt_unk[I, 2];
-                Rt_unk[I, N2] = Rt_unk[I, N1];
-                Rt_unk[I, N3] = Rt_unk[I, N];
+                Rt_unk[I, N2] = Rt_unk[I, N];
+                Rt_unk[I, N3] = Rt_unk[I, N_1];
             }
 
             for (int II = 0; II < NM; II++)
@@ -209,10 +209,10 @@ namespace CorrosionModel
                                 C4 = Lambda4 * AZ[M3, L3] * XK3 * XI3;
                                 C3 = Lambda4 * 2 * D1AZY * XK3 * XI3;
                                 C2 = Lambda2 * ((2 * AZ_nu[M3, L3] + BZ[M3, L3]) * D2XK + (2 * D1AZ_nuX +
-                                    D1BZX) * D1XK + (Lambda2 * D2AZY + D2AZ_nuX + V2 * QL1 * QL) * XK3) * XI3;
+                                    D1BZX) * D1XK + (Lambda2 * D2AZY + D2AZ_nuX + V2 * QL2 * QL) * XK3) * XI3;
                                 C1 = Lambda2 * ((2 * D1AZ_nuY + D1BZY) * D2XK + D2BZXY * D1XK) * XI3;
                                 C = (AZ[M3, M3] * D4XK + 2 * D1AZX * D3XK + (D2AZX + Lambda2 * D2AZ_nuY +
-                                    V2 * QL2 * QL) * D2XK) * XI3;
+                                    V2 * QL1 * QL) * D2XK) * XI3;
 
                                 if (!IL)
                                 {
@@ -257,10 +257,10 @@ namespace CorrosionModel
                                         2 * Corrosion[M4, L3] + 4 * Corrosion[M3, L3] - 2 * Corrosion[M2, L3] +
                                         Corrosion[M4, L2] - 2 * Corrosion[M3, L2] + Corrosion[M2, L2]);
 
-                                    Q = -(AZ[M3, L3] * D4PHIX + 2 * D1AZX * D3PHIX + (D2AZX + Lambda2 * D2AZ_nuY) *
+                                    Q = (AZ[M3, L3] * D4PHIX + 2 * D1AZX * D3PHIX + (D2AZX + Lambda2 * D2AZ_nuY) *
                                         D2PHIX + Lambda2 * ((2 * D1AZ_nuY + D1BZY) * D3PHIXXY + D2BZXY * D2PHIXY +
                                         (2 * AZ_nu[M3, L3] + BZ[M3, L3]) * D4PHIXXYY + (2 * D1AZ_nuX + D1BZX) *
-                                        D3PHIXYY + (Lambda2 * D2AZ_nuY + D2AZ_nuX) * D2PHIY +
+                                        D3PHIXYY + (Lambda2 * D2AZY + D2AZ_nuX) * D2PHIY +
                                         Lambda2 * 2 * D1AZY * D3PHIY + Lambda2 * AZ[M3, L3] * D4PHIY)) * XI3 / 2
                                         + 2 * V4 * QTW[M2, L2] * XI3;
                                 }
@@ -308,9 +308,9 @@ namespace CorrosionModel
                                 {
                                     Q = (Lambda2 * (D2tilde_AY * A_nu[M3, L3] + 2 * D1tilde_AY * D1A_nuY + D2A_nuY *
                                         tilde_A) - D2tilde_AX * A[M3, L3] - 2 * D1tilde_AX * D1AX - D2AX *
-                                        tilde_A) * V2 * QL1 * QL * XI3 + (D2tilde_AX * A_nu[M3, L3] +
+                                        tilde_A) * V2 * QL2 * QL * XI3 + (D2tilde_AX * A_nu[M3, L3] +
                                         2 * D1tilde_AX * D1A_nuX + D2A_nuX * tilde_A - Lambda2 * (D2tilde_AY *
-                                        A[M3, L3] + 2 * D1tilde_AY * D1AY + D2AY * tilde_A)) * V2 * QL * QL2 * XI3;
+                                        A[M3, L3] + 2 * D1tilde_AY * D1AY + D2AY * tilde_A)) * V2 * QL * QL1 * XI3;
 
                                 }
                                 if (!IL)
@@ -332,20 +332,20 @@ namespace CorrosionModel
                                     Q += Lambda2 * (D2XF * D2YF * XF3 * YF3 - Pow(D1XF * D1YF, 2)) * XI3;
                                 }
                             }
-                            S1[I_1] = C4 + C3 / 2; // сократилось V3, осталось "2"
-                            S2[I_1] = -4 * C4 - C3 + C2 + C1 / 2;
+                            S5[I_1] = C4 + C3 / 2; // сократилось V3, осталось "2"
+                            S4[I_1] = -4 * C4 - C3 + C2 + C1 / 2;
                             S3[I_1] = 6 * C4 - 2 * C2 + C;
-                            S4[I_1] = -4 * C4 + C3 + C2 - C1 / 2;
-                            S5[I_1] = C4 - C3 / 2;
+                            S2[I_1] = -4 * C4 + C3 + C2 - C1 / 2;
+                            S1[I_1] = C4 - C3 / 2;
                             S6[I_1] = Q;
                         }
                         double T = 0.5;
-                        double A1 = SIM(S1, T, N);
-                        double A2 = SIM(S2, T, N);
-                        double A3 = SIM(S3, T, N);
-                        double A4 = SIM(S4, T, N);
-                        double A5 = SIM(S5, T, N);
-                        double A6 = SIM(S6, T, N);
+                        double A1 = Integrate(S1, T, N);
+                        double A2 = Integrate(S2, T, N);
+                        double A3 = Integrate(S3, T, N);
+                        double A4 = Integrate(S4, T, N);
+                        double A5 = Integrate(S5, T, N);
+                        double A6 = Integrate(S6, T, N);
 
                         int IJ = IIN + J_2;
                         int KJ = KKN + J_2;
@@ -374,14 +374,14 @@ namespace CorrosionModel
                         {
                             S[IJ, KJ - 2] = A1;
                             S[IJ, KJ - 1] = A2;
-                            S[IJ, KJ] = A3;
-                            S[IJ, KJ + 1] = A4 + A5;
+                            S[IJ, KJ] = A3 + A5;
+                            S[IJ, KJ + 1] = A4;
                         }
                         else if (J_2 == N_1)
                         {
-                            S[IJ, KJ - 2] = A1;
-                            S[IJ, KJ - 1] = A2 + A5;
-                            S[IJ, KJ] = A3 + A4;
+                            S[IJ, KJ - 2] = A1 + A5;
+                            S[IJ, KJ - 1] = A2 + A4;
+                            S[IJ, KJ] = A3;
                         }
                         XS[IJ] += A6;
                     }

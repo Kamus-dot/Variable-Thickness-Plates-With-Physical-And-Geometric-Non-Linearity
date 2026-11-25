@@ -18,13 +18,14 @@ namespace CorrosionModel
         {
             INTEGER();
             QL = QL0;
-            Q = QP0;
+            Q = QP0 == 0 ? DQP : QP0;
+
             TempQ(ICON);
 
             Varite();
             if (!JF) Param();
             else if (!IL) Var();
-            DeformationIntesivity();
+            DeformationIntesivity(false);
             Console.WriteLine($"{MaxEI} is Max Deformation Intensivity");
             Console.WriteLine($"ПОПЕР.НАГР.={Q} ПРОД.НАГР.={QL} ПРОГИБ В ЦЕНТРЕ={WXY[N, N]}");
 

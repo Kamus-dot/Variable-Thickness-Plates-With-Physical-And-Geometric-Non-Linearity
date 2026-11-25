@@ -49,8 +49,8 @@ namespace CorrosionModel
                 {
                     if (GutmanThickness(t, MaxAVG) > 0.015 * HMaxAVG)
                     {
-                        Delta_t = 0.015 * HMaxAVG / GutmanThickness(t, MaxAVG);
                         t -= Delta_t;
+                        Delta_t /= 2;
                         continue;
                     }
                     GutmanThickness(t);
@@ -71,14 +71,16 @@ namespace CorrosionModel
             if (!JF) Param();
             else if (IL) Varite();
             else Var();
-            DeformationIntesivity();
+            DeformationIntesivity(true);
             if (CorrosionModel == CorrosionModels.Gutman)
             {
                 Console.WriteLine($"{MaxAVG} is Max Average Deformation at {HMaxAVG}");
             }
+            Console.WriteLine($"Размерности: N={N}, ICON={ICON}, NT={NT}");
             Console.WriteLine($"Тип коррозии: {CorrosionModel}");
             Console.WriteLine($"Физическая линейность: {JF}, Геометрическая линейность: {IL}");
             Console.WriteLine($"{MaxEI} is Max Deformation Intensivity");
+            Console.WriteLine($"At: x={MaxI}, y={MaxJ}, z={MaxK}");
             Console.WriteLine($"ПОПЕР.НАГР.={Q} ПРОД.НАГР.={QL} ПРОГИБ В ЦЕНТРЕ={WXY[N, N]}");
 
             double PRO = PROGIB(WXY, N);
